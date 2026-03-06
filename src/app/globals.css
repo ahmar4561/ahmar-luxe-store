@@ -1,0 +1,88 @@
+* {
+  /* Click karne par aane wali ajeeb line khatam karne ke liye */
+  -webkit-tap-highlight-color: transparent;
+  outline: none !important;
+}
+
+body {
+  /* Pure page par cursor ko natural rakhne ke liye */
+  caret-color: transparent;
+}
+
+input, textarea {
+  /* Sirf likhne wali jagah par cursor wapas lane ke liye */
+  caret-color: auto;
+}
+/* --- CSS VARIABLES (Full Theme Control) --- */
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --nav-bg: #ffffff;
+  --card-bg: #f9f9f9;        /* Light mode me card thora greyish white */
+  --card-border: #eeeeee;    /* Light mode card border */
+  --text-muted: #666666;     /* Light mode me description ka color */
+  --border: #eaeaea;
+  --accent: #D4AF37;         /* Gold (Add to Bag ke liye constant) */
+  --btn-text: #000000;       /* Gold button ke upar text ka color */
+}
+
+/* Jab HTML par data-theme='dark' aayega */
+[data-theme='dark'] {
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --nav-bg: #000000;
+  --card-bg: #0e0e0e;        /* Dark mode me card ka color */
+  --card-border: #1a1a1a;    /* Dark mode card border */
+  --text-muted: #888888;     /* Dark mode description color */
+  --border: #222222;
+  --accent: #D4AF37;         /* Gold constant rahega luxury feel ke liye */
+  --btn-text: #000000;       /* Dark mode me bhi gold par black text acha lagta hai */
+}
+
+/* --- BASIC RESET --- */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  /* Transitions smooth switching ke liye */
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* --- SMOOTH TRANSITION (AFTER LOAD) --- */
+body.loaded {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* --- LINKS & BUTTONS --- */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+a:hover {
+  opacity: 0.7;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Global Card Styling taake har jagah light/dark automatically chale */
+.product-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--foreground);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
