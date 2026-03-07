@@ -4,23 +4,28 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 
-// --- IMAGE FIX LOGIC (Offline to Online) ---
-const getCorrectImage = (img: string, category: string) => {
+// --- FIXED IMAGE LOGIC (Category Specific & Unique) ---
+const getCorrectImage = (img: string, category: string, index: number) => {
   if (!img || img.startsWith('/images') || !img.includes('http')) {
-    if (category.toLowerCase().includes('watch')) {
-      return "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=1000";
+    const cat = category.toLowerCase().trim();
+    // Unique images using Unsplash source + index for variety
+    if (cat.includes('watch')) {
+      return `https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&sig=${index}`;
     }
-    if (category.toLowerCase().includes('mobile')) {
-      return "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?q=80&w=1000";
+    if (cat.includes('mobile') || cat.includes('phone')) {
+      return `https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1000&sig=${index}`;
     }
-    return "https://images.unsplash.com/photo-1517336714460-4c9889a79683?q=80&w=1000"; // Default Laptop
+    if (cat.includes('laptop')) {
+      return `https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1000&sig=${index}`;
+    }
+    return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000&sig=${index}`;
   }
   return img; 
 };
 
-// --- UPDATED PRODUCT CARD WITH ZOOM & FLOAT EFFECT ---
+// --- PRODUCT CARD (Original Effects Ke Saath) ---
 const ProductCard = memo(({ product, index, addToCart }: any) => {
-  const displayImage = getCorrectImage(product.image, product.category);
+  const displayImage = getCorrectImage(product.image, product.category, index);
 
   return (
     <motion.div 
@@ -29,7 +34,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       whileHover={{ 
-        y: -8, // Float up effect
+        y: -8, // Wahi Float Effect
         transition: { duration: 0.3 }
       }}
       transition={{ duration: 0.2 }}
@@ -43,16 +48,9 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
         overflow: "hidden" 
       }}
     >
-      {/* Image Container with Inner Zoom */}
-      <div style={{ 
-        position: "relative", 
-        borderRadius: "15px", 
-        height: "200px", 
-        overflow: "hidden", 
-        backgroundColor: "#000" 
-      }}>
+      <div style={{ position: "relative", borderRadius: "15px", height: "200px", overflow: "hidden", backgroundColor: "#000" }}>
         <motion.div
-          whileHover={{ scale: 1.1 }} // Zoom inside the container
+          whileHover={{ scale: 1.1 }} // Wahi Inner Zoom
           transition={{ duration: 0.5 }}
           style={{ width: "100%", height: "100%", position: "relative" }}
         >
@@ -73,15 +71,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
         <span style={{ fontSize: "9px", color: "var(--accent)", letterSpacing: '1px', fontWeight: 'bold' }}>
           {product.category.toUpperCase()}
         </span>
-        <h2 style={{ 
-          fontSize: "15px", 
-          margin: "5px 0", 
-          color: "var(--foreground)", 
-          fontWeight: '600', 
-          whiteSpace: 'nowrap', 
-          overflow: 'hidden', 
-          textOverflow: 'ellipsis' 
-        }}>
+        <h2 style={{ fontSize: "15px", margin: "5px 0", color: "var(--foreground)", fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {product.name}
         </h2>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px" }}>
@@ -125,12 +115,18 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
   useEffect(() => {
     async function fetchProducts() {
-      // Clear old cache to see new images
-      sessionStorage.removeItem("ultra_cache");
+      // 1. Instant Loading Check
+      const cached = sessionStorage.getItem("ultra_cache");
+      if (cached) {
+        setAllProducts(JSON.parse(cached));
+        setLoading(false);
+      }
+
       try {
-        const res = await fetch("/api/products", { cache: 'no-store' });
+        const res = await fetch("/api/products");
         const data = await res.json();
         setAllProducts(data);
+        sessionStorage.setItem("ultra_cache", JSON.stringify(data));
       } catch (err) { console.error(err); } 
       finally { setLoading(false); }
     }
@@ -141,40 +137,28 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
     return allProducts.filter((p: any) => {
       const pCat = p.category.toLowerCase().trim();
       const sCat = slug.toLowerCase().trim();
-      return pCat === sCat || pCat === `${sCat}s` || sCat === `${pCat}s`;
+      return pCat === sCat || pCat === `${sCat}s` || sCat === `${pCat}s` || sCat === 'all';
     });
   }, [allProducts, slug]);
 
   const displayProducts = filtered.slice(0, visibleCount);
 
-  if (loading) return <div style={{color: 'var(--accent)', textAlign: 'center', marginTop: '100px', fontWeight: 'bold'}}>LOADING LUXE COLLECTION...</div>;
+  // Sirf pehli baar loading dikhayega, navigation fast rakhega
+  if (loading && allProducts.length === 0) {
+    return <div style={{color: 'var(--accent)', textAlign: 'center', marginTop: '100px', fontWeight: 'bold'}}>LOADING LUXE...</div>;
+  }
 
   return (
     <div style={{ padding: "20px", backgroundColor: "var(--background)", minHeight: "100vh" }}>
       <motion.h1 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ 
-          textAlign: "center", 
-          fontSize: "28px", 
-          fontWeight: "900", 
-          color: "var(--accent)", 
-          marginBottom: "40px", 
-          marginTop: "20px", 
-          textTransform: "uppercase",
-          letterSpacing: "3px"
-        }}
+        style={{ textAlign: "center", fontSize: "28px", fontWeight: "900", color: "var(--accent)", marginBottom: "40px", marginTop: "20px", textTransform: "uppercase", letterSpacing: "3px" }}
       >
         {slug}
       </motion.h1>
       
-      <div style={{ 
-        display: "grid", 
-        gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", 
-        gap: "25px", 
-        maxWidth: "1400px", 
-        margin: "0 auto" 
-      }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "25px", maxWidth: "1400px", margin: "0 auto" }}>
         <AnimatePresence mode="popLayout">
           {displayProducts.map((product: any, index: number) => (
             <ProductCard key={product._id} product={product} index={index} addToCart={addToCart} />
@@ -189,23 +173,8 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
       )}
 
       <style jsx global>{`
-        .load-more-btn { 
-          padding: 14px 50px; 
-          background: var(--accent); 
-          color: #000; 
-          border: none; 
-          cursor: pointer; 
-          border-radius: 30px; 
-          font-weight: 900; 
-          letter-spacing: 2px;
-          transition: 0.3s; 
-          box-shadow: 0 10px 20px rgba(212, 175, 55, 0.15);
-        }
-        .load-more-btn:hover { 
-          transform: translateY(-3px); 
-          box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3);
-          opacity: 0.95; 
-        }
+        .load-more-btn { padding: 14px 50px; background: var(--accent); color: #000; border: none; cursor: pointer; border-radius: 30px; font-weight: 900; letter-spacing: 2px; transition: 0.3s; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.15); }
+        .load-more-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3); opacity: 0.95; }
       `}</style>
     </div>
   );
