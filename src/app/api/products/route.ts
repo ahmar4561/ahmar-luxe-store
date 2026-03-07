@@ -50,3 +50,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+// 4. PATCH: Saari purani images ko online links se replace karne ke liye
+export async function PATCH() {
+  try {
+    await connectDB();
+    
+    // 1. Saare Mobiles ki images update karein
+    await Product.updateMany(
+      { category: "Mobile" }, 
+      { image: "https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=1000" }
+    );
+
+    // 2. Saari Watches ki images update karein
+    await Product.updateMany(
+      { category: "Watches" }, 
+      { image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000" }
+    );
+
+    // 3. Saare Laptops ki images update karein
+    await Product.updateMany(
+      { category: "Laptop" }, 
+      { image: "https://images.unsplash.com/photo-1517336714460-4c9889a79683?q=80&w=1000" }
+    );
+
+    return NextResponse.json({ message: "Success! Sari images online links se replace ho gayi hain. Ab website check karein." });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
