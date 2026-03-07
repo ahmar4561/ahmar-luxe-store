@@ -7,9 +7,17 @@ import Product from "../../../models/Product";
 
 
 // 1. GET: Saare products dikhane ke liye
+// 1. GET: Saare products dikhane aur FIX karne ke liye
 export async function GET() {
   try {
     await connectDB();
+
+    // 🔥 MAGIC FIX: Ye line purani local images ko online links se replace kar degi
+    await Product.updateMany(
+      { image: { $regex: /^\/images/ } }, // Agar image ka path "/images" se shuru ho raha ho
+      { image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000" } // Toh watch ki pic laga do
+    );
+
     const products = await Product.find({}).sort({ createdAt: -1 });
     return NextResponse.json(products);
   } catch (error: any) {
