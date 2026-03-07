@@ -4,19 +4,56 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 
-// --- ACCURATE ONLINE IMAGES LOGIC (UNIQUE FOR EACH) ---
+// --- HAR CATEGORY KI ALAG ALAG IMAGES KA LOGIC ---
 const getCorrectImage = (img: string, category: string, index: number) => {
   const cat = (category || "").toLowerCase().trim();
   
-  // Unique identifiers taake har product alag dikhe
-  if (cat.includes('mobile')) return `https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=500&sig=mob${index}`;
-  if (cat.includes('watch')) return `https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=500&sig=wtch${index}`;
-  if (cat.includes('laptop')) return `https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=500&sig=lap${index}`;
-  if (cat.includes('fashion') || cat.includes('clothing')) return `https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=500&sig=fas${index}`;
-  if (cat.includes('gaming')) return `https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=500&sig=gam${index}`;
-  if (cat.includes('electronic')) return `https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=500&sig=ele${index}`;
-  
-  return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=500&sig=def${index}`;
+  // 1. MOBILE IMAGES (4 different types)
+  if (cat.includes('mobile')) {
+    const images = [
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
+      "https://images.unsplash.com/photo-1592890288564-76628a30a657",
+      "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37"
+    ];
+    return `${images[index % images.length]}?q=80&w=600`;
+  }
+
+  // 2. WATCH IMAGES (4 different types)
+  if (cat.includes('watch')) {
+    const images = [
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+      "https://images.unsplash.com/photo-1508685096489-8a054a0553ef",
+      "https://images.unsplash.com/photo-1542496658-91bd65836a0a",
+      "https://images.unsplash.com/photo-1526173176685-5a8b4306822e"
+    ];
+    return `${images[index % images.length]}?q=80&w=600`;
+  }
+
+  // 3. LAPTOP IMAGES
+  if (cat.includes('laptop')) {
+    const images = [
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
+      "https://images.unsplash.com/photo-1517336712462-877523366436",
+      "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5",
+      "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2"
+    ];
+    return `${images[index % images.length]}?q=80&w=600`;
+  }
+
+  // 4. FASHION/CLOTHING
+  if (cat.includes('fashion') || cat.includes('clothing')) {
+    const images = [
+      "https://images.unsplash.com/photo-1445205170230-053b83016050",
+      "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04",
+      "https://images.unsplash.com/photo-1483985988355-763728e1935b",
+      "https://images.unsplash.com/photo-1467043237213-65f2da53396f"
+    ];
+    return `${images[index % images.length]}?q=80&w=600`;
+  }
+
+  // Default for Gaming/Electronics
+  return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&sig=${index}`;
 };
 
 const ProductCard = memo(({ product, index, addToCart }: any) => {
@@ -27,7 +64,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
       layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8 }} // <--- WAHEE FLOAT EFFECT
+      whileHover={{ y: -8 }} 
       style={{ 
         border: "1px solid var(--card-border)", 
         borderRadius: "20px", 
@@ -38,7 +75,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
     >
       <div style={{ position: "relative", borderRadius: "15px", height: "200px", overflow: "hidden", backgroundColor: "#000" }}>
         <motion.div 
-          whileHover={{ scale: 1.1 }} // <--- WAHEE ZOOM EFFECT
+          whileHover={{ scale: 1.1 }} 
           transition={{ duration: 0.5 }} 
           style={{ width: "100%", height: "100%", position: "relative" }}
         >
