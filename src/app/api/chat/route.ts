@@ -4,8 +4,14 @@ export async function POST(req: Request) {
   try {
     const { prompt } = await req.json();
     
-    const apiKey = "AIzaSyBfNppeNwkIaEa1ZFlatqgmJnRUs3-pehE"; 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+    // Yahan humne variable use kiya hai jo Vercel se key uthayega
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY; 
+    
+    if (!apiKey) {
+      return NextResponse.json({ text: "API Key missing in environment settings." });
+    }
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const systemPrompt = `
       Context: You are "Ahmar Luxe AI", the elite concierge for AHMAR LUXE.
@@ -37,16 +43,12 @@ export async function POST(req: Request) {
     const data = await response.json();
 
     if (!response.ok) {
-      return NextResponse.json({ text: `Google Response: ${data.error?.message || "Check Key"}` });
+      return NextResponse.json({ text: `AI Service Notice: ${data.error?.message || "Our concierge is busy."}` });
     }
 
     if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
       let aiText = data.candidates[0].content.parts[0].text;
-      
-      // Is line se brackets hat jayenge agar AI ne galti se laga diye hon
       aiText = aiText.replace(/[\[\]\(\)]/g, ""); 
-      
-      // Link ke sath green dot lagana
       aiText = aiText.replace("https://wa.me/923456187264", "🟢 CLICK TO WHATSAPP: https://wa.me/923456187264");
       
       return NextResponse.json({ text: aiText });

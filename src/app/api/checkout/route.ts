@@ -14,9 +14,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    // Stripe ke liye line_items ko clean karna
     const line_items = items.map((item: any) => {
-      // Image Validation: Stripe sirf 'http' se shuru hone wale links leta hai
       const hasValidImage = item.image && typeof item.image === "string" && item.image.startsWith("http");
       
       return {
@@ -24,7 +22,6 @@ export async function POST(req: Request) {
           currency: "pkr",
           product_data: {
             name: item.name,
-            // Agar image valid nahi hai toh array khali rakhein (ye error se bachayega)
             images: hasValidImage ? [item.image] : [],
           },
           unit_amount: Math.round(Number(item.price) * 100),
@@ -37,15 +34,14 @@ export async function POST(req: Request) {
       payment_method_types: ["card"],
       line_items: line_items,
       mode: "payment",
-      // localhost par test karne ke liye ye sahi hai
-      success_url: "http://localhost:3000/success",
-      cancel_url: "http://localhost:3000/",
+      // LIVE URLS UPDATED HERE:
+      success_url: "https://ahmar-luxe-store-e77d.vercel.app/success",
+      cancel_url: "https://ahmar-luxe-store-e77d.vercel.app/",
     });
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
     console.error("Stripe Backend Error:", error);
-    // Behtar error message bhej rahe hain
     return NextResponse.json({ error: error.raw?.message || error.message }, { status: 500 });
   }
 }
