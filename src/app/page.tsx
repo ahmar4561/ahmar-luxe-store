@@ -6,9 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
-// ISR: Har 60 seconds baad background mein data refresh hoga
-export const revalidate = 60;
-
 const Chatbot = dynamic(() => import('@/components/AIChatbot'), { ssr: false });
 
 // --- STABLE IMAGES LOGIC ---
@@ -49,7 +46,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
             alt={product.name} 
             fill 
             sizes="(max-width: 768px) 50vw, 240px" 
-            priority={index < 4} // FAST LOAD: Pehli 4 images foran load hon gi
+            priority={index < 4} 
             unoptimized 
             style={{ objectFit: "cover" }} 
           />
@@ -71,12 +68,16 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
 function HomeContent() {
   const { addToCart, globalProducts } = useCart(); 
   const [visibleCount, setVisibleCount] = useState(12);
+  const [mounted, setMounted] = useState(false);
   const searchParams = useSearchParams();
   
   const search = searchParams.get("search")?.toLowerCase() || "";
   const category = searchParams.get("category")?.toLowerCase() || "all";
 
-  useEffect(() => { setVisibleCount(12); }, [category, search]);
+  useEffect(() => { 
+    setMounted(true);
+    setVisibleCount(12); 
+  }, [category, search]);
 
   const filteredResults = useMemo(() => {
     if (!globalProducts || globalProducts.length === 0) return [];
@@ -88,6 +89,8 @@ function HomeContent() {
   }, [globalProducts, search, category]);
 
   const displayProducts = filteredResults.slice(0, visibleCount);
+
+  if (!mounted) return <div style={{ minHeight: '100vh', backgroundColor: 'var(--background)' }} />;
 
   return (
     <div style={{ padding: "15px", backgroundColor: "var(--background)", minHeight: "100vh" }}>
@@ -117,21 +120,8 @@ function HomeContent() {
       <Chatbot />
       
       <style jsx global>{`
-        .product-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr); 
-          gap: 15px;
-          max-width: 1300px;
-          margin: 0 auto;
-        }
-
-        @media (min-width: 1024px) {
-          .product-grid {
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 25px;
-          }
-        }
-
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 1300px; margin: 0 auto; }
+        @media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(4, 1fr); gap: 25px; } }
         .load-more-btn { padding: 14px 50px; background: var(--accent); color: #000; border: none; cursor: pointer; border-radius: 30px; font-weight: 900; letter-spacing: 2px; transition: 0.3s; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.15); }
         .load-more-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3); opacity: 0.95; }
       `}</style>
@@ -141,7 +131,7 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div style={{ textAlign: 'center', paddingTop: '50px', color: '#D4AF37' }}>LOADING AHMAR LUXE...</div>}>
+    <Suspense fallback={null}>
       <HomeContent />
     </Suspense>
   );
