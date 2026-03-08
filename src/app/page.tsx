@@ -127,7 +127,8 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => addToCart(product)} 
+            // FIX: Sending the EXACT displayed image to the cart
+            onClick={() => addToCart({ ...product, image: displayImage })} 
             style={{ 
               backgroundColor: "var(--accent)", 
               color: "#000", 
