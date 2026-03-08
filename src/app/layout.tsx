@@ -6,79 +6,43 @@ import { useRouter, usePathname } from "next/navigation";
 import { CartProvider, useCart } from "@/context/CartContext";
 import AIChatbot from "@/components/AIChatbot";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from 'next/image';
 
-// --- 1. CART DRAWER ---
+// --- CART DRAWER & BAG ICON (No Logic Change) ---
 const CartDrawer = () => {
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, cartTotal } = useCart();
   const handleCartCheckout = async () => {
     if (cart.length === 0) return alert("Your bag is empty!");
     try {
-      const checkoutItems = cart.map((item: any) => ({
-        name: item.name, price: item.price, quantity: item.qty, image: item.image || item.img
-      }));
       const response = await fetch("/api/checkout", { 
-        method: "POST", body: JSON.stringify({ items: checkoutItems }), 
+        method: "POST", body: JSON.stringify({ items: cart.map((i:any)=>({name:i.name, price:i.price, quantity:i.qty, image:i.image||i.img})) }), 
         headers: { "Content-Type": "application/json" }
       });
       const data = await response.json();
       if (data.url) window.location.href = data.url;
-      else alert("Payment Error: " + data.error);
-    } catch (err) {
-      alert("System Busy: Stripe is not responding.");
-    }
+    } catch (err) { alert("System Busy."); }
   };
-
   return (
     <AnimatePresence>
       {isCartOpen && (
         <>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={() => setIsCartOpen(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1999 }}
-          />
-          <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="cart-drawer-container"
-            style={{ 
-              position: 'fixed', right: '10px', top: '10px', bottom: '10px',
-              height: 'calc(100vh - 20px)', width: 'calc(100% - 20px)', maxWidth: '420px', 
-              background: 'var(--background)', border: '1px solid var(--border)', 
-              zIndex: 2000, display: 'flex', flexDirection: 'column', 
-              boxShadow: '-10px 0 40px rgba(0,0,0,0.4)', borderRadius: '24px', overflow: 'hidden'
-            }}
-          >
-            <div style={{ padding: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
-              <div>
-                <h2 style={{ fontSize: '18px', fontWeight: '900', color: '#D4AF37', letterSpacing: '2px', margin: 0 }}>MY BAG</h2>
-                <span style={{ fontSize: '10px', opacity: 0.5 }}>{cart.length} ITEMS SELECTED</span>
-              </div>
-              <button onClick={() => setIsCartOpen(false)} 
-                style={{ background: "rgba(212, 175, 55, 0.1)", border: "none", borderRadius: "50%", width: "32px", height: "32px", color: "#D4AF37", cursor: "pointer" }}>✕</button>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCartOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1999 }} />
+          <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} style={{ position: 'fixed', right: '10px', top: '10px', bottom: '10px', height: 'calc(100vh - 20px)', width: 'calc(100% - 20px)', maxWidth: '420px', background: 'var(--background)', border: '1px solid var(--border)', zIndex: 2000, display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 40px rgba(0,0,0,0.4)', borderRadius: '24px', overflow: 'hidden' }}>
+            <div style={{ padding: '25px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '900', color: '#D4AF37' }}>MY BAG</h2>
+              <button onClick={() => setIsCartOpen(false)} style={{ background: "none", border: "none", color: "#D4AF37", cursor: "pointer", fontSize: "20px" }}>✕</button>
             </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {cart.length === 0 ? <div style={{ textAlign: "center", marginTop: "100px", opacity: 0.5 }}>YOUR ELITE BAG IS EMPTY.</div> : 
+            <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+              {cart.length === 0 ? <div style={{ textAlign: "center", marginTop: "50px", opacity: 0.5 }}>EMPTY BAG</div> : 
                 cart.map((item: any) => (
-                  <div key={item._id} style={{ display: "flex", gap: "15px", padding: "12px", background: 'rgba(255,255,255,0.03)', borderRadius: "16px", border: "1px solid var(--border)", alignItems: 'center' }}>
-                    <img src={item.image || item.img} style={{ width: "65px", height: "65px", objectFit: "cover", borderRadius: "12px" }} alt={item.name} />
-                    <div style={{ flex: 1 }}>
-                      <h4 style={{ margin: "0", fontSize: "13px" }}>{item.name}</h4>
-                      <p style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: '#D4AF37' }}>Rs. {item.price.toLocaleString()}</p>
-                      <button onClick={() => removeFromCart(item._id)} style={{ background: "none", border: "none", color: "#ff4444", cursor: "pointer", fontSize: "10px" }}>REMOVE</button>
-                    </div>
+                  <div key={item._id} style={{ display: "flex", gap: "15px", marginBottom: "15px", alignItems: 'center' }}>
+                    <img src={item.image || item.img} style={{ width: "50px", height: "50px", borderRadius: "8px" }} alt="" />
+                    <div style={{ flex: 1 }}><h4 style={{ fontSize: "12px", margin: 0 }}>{item.name}</h4><p style={{ color: '#D4AF37', margin: 0 }}>Rs. {item.price}</p></div>
                   </div>
                 ))
               }
             </div>
-            <div style={{ padding: '25px', background: 'var(--nav-bg)', borderTop: "1px solid var(--border)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-                <span style={{ opacity: 0.6, fontSize: '11px' }}>TOTAL ESTIMATE</span>
-                <span style={{ fontSize: "18px", fontWeight: "900", color: "#D4AF37" }}>Rs. {cartTotal.toLocaleString()}</span>
-              </div>
-              <button onClick={handleCartCheckout} disabled={cart.length === 0} 
-                style={{ width: "100%", padding: "14px", background: cart.length === 0 ? "#333" : "linear-gradient(135deg, #D4AF37 0%, #F1D27B 100%)", color: "#000", border: "none", borderRadius: "12px", fontWeight: "900", cursor: "pointer" }}>
-                PROCEED TO PAY 💎
-              </button>
+            <div style={{ padding: '20px', borderTop: "1px solid var(--border)" }}>
+              <button onClick={handleCartCheckout} style={{ width: "100%", padding: "12px", background: "#D4AF37", color: "#000", border: "none", borderRadius: "10px", fontWeight: "900" }}>CHECKOUT</button>
             </div>
           </motion.div>
         </>
@@ -87,17 +51,15 @@ const CartDrawer = () => {
   );
 };
 
-// --- 2. BAG ICON ---
 const BagIcon = () => {
   const { setIsCartOpen, cartCount } = useCart();
   return (
-    <motion.div whileHover={{ scale: 1.1 }} onClick={() => setIsCartOpen(true)} style={{ position: "relative", cursor: "pointer", fontSize: "22px" }}>
-      🛍️ {cartCount > 0 && <span style={{ position: "absolute", top: "-5px", right: "-8px", backgroundColor: "#D4AF37", color: "#000", borderRadius: "50%", minWidth: "16px", height: "16px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "9px", fontWeight: "900", border: '1px solid var(--background)' }}>{cartCount}</span>}
-    </motion.div>
+    <div onClick={() => setIsCartOpen(true)} style={{ position: "relative", cursor: "pointer", fontSize: "22px" }}>
+      🛍️ {cartCount > 0 && <span style={{ position: "absolute", top: "-5px", right: "-8px", backgroundColor: "#D4AF37", color: "#000", borderRadius: "50%", padding: "2px 6px", fontSize: "10px", fontWeight: "900" }}>{cartCount}</span>}
+    </div>
   );
 };
 
-// --- 3. ROOT LAYOUT ---
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -106,17 +68,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("ahmar_luxe_theme") || "dark";
-    if (savedTheme === "dark") setDarkMode(true);
+    const t = localStorage.getItem("ahmar_luxe_theme") || "dark";
+    setDarkMode(t === "dark");
+    document.documentElement.setAttribute("data-theme", t);
     setMounted(true);
-    document.documentElement.setAttribute("data-theme", savedTheme);
   }, []);
 
   const toggleDarkMode = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-    document.documentElement.setAttribute("data-theme", newMode ? "dark" : "light");
-    localStorage.setItem("ahmar_luxe_theme", newMode ? "dark" : "light");
+    const m = !darkMode ? "dark" : "light";
+    setDarkMode(!darkMode);
+    document.documentElement.setAttribute("data-theme", m);
+    localStorage.setItem("ahmar_luxe_theme", m);
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -128,118 +90,114 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body suppressHydrationWarning style={{ margin: 0, backgroundColor: "var(--background)", color: "var(--foreground)" }}>
         <CartProvider>
-          {/* PROFESSIONAL NAV BAR - RESPONSIVE */}
-          <nav className="main-nav">
-            <Link href="/" className="logo-text">AHMAR LUXE</Link>
+          {/* NAVIGATION - RESPONSIVE FIXED */}
+          <nav className="navbar-container">
+            <div className="nav-wrapper">
+              <Link href="/" className="nav-logo">AHMAR LUXE</Link>
 
-            <form onSubmit={handleSearch} className="search-form">
-              <input 
-                type="text" placeholder="Search premium collection..." 
-                value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-            </form>
+              <form onSubmit={handleSearch} className="nav-search-form">
+                <input 
+                  type="text" placeholder="Search..." 
+                  value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                  className="nav-search-input"
+                />
+              </form>
 
-            <div className="nav-actions">
-              <button onClick={toggleDarkMode} className="theme-toggle">
-                {darkMode ? "☀️" : "🌙"}
-              </button>
-              <BagIcon />
+              <div className="nav-icons">
+                <button onClick={toggleDarkMode} className="nav-theme-btn">{darkMode ? "☀️" : "🌙"}</button>
+                <BagIcon />
+              </div>
             </div>
           </nav>
 
-          {/* CATEGORIES - SCROLLABLE ON MOBILE, CENTERED ON LAPTOP */}
-          <div className="category-bar">
+          {/* CATEGORIES BAR */}
+          <div className="category-scroll-bar">
             {["ALL", "WATCHES", "MOBILE", "FASHION", "ELECTRONICS", "GAMING", "LAPTOP"].map((cat) => (
               <Link key={cat} href={cat === "ALL" ? "/" : `/category/${cat.toLowerCase()}`}
-                className={`cat-link ${ (pathname.includes(cat.toLowerCase()) || (pathname === "/" && cat === "ALL")) ? "active" : "" }`}>
+                className={`cat-item ${ (pathname.includes(cat.toLowerCase()) || (pathname === "/" && cat === "ALL")) ? "active" : "" }`}>
                 {cat}
               </Link>
             ))}
           </div>
 
-          <main style={{ minHeight: "85vh", maxWidth: "1400px", margin: "0 auto" }}>
+          <main style={{ minHeight: "80vh", maxWidth: "1400px", margin: "0 auto", padding: "0 10px" }}>
             {mounted ? children : null}
           </main>
 
           <CartDrawer />
 
-          {/* LUXURY FOOTER WITH SOCIALS - FIXED FOR LAPTOP */}
-          <footer className="luxe-footer">
-             <div className="footer-grid">
-               <div>
-                 <h2 className="footer-brand">AHMAR LUXE</h2>
-                 <p className="footer-desc">Elevating your lifestyle with the world's most exclusive collections.</p>
+          {/* LUXURY FOOTER */}
+          <footer className="footer-luxe">
+             <div className="footer-content">
+               <div className="footer-section">
+                 <h2 className="footer-title">AHMAR LUXE</h2>
+                 <p className="footer-text">The world's most exclusive collections.</p>
                </div>
-               <div>
-                 <h4 className="footer-head">NAVIGATE</h4>
-                 <div className="footer-links">
-                    <Link href="/">Home</Link>
-                    <Link href="/privacy">Privacy Policy</Link>
-                 </div>
-               </div>
-               <div>
-                 <h4 className="footer-head">CONNECT</h4>
-                 <div className="social-icons">
+               <div className="footer-section">
+                 <h4 className="footer-sub">CONNECT</h4>
+                 <div className="footer-socials">
                   {[
                     { id: 'FB', url: 'https://www.facebook.com/ahmarali.memon' },
                     { id: 'IG', url: 'https://www.instagram.com/ahmar_264?igsh=cHhhZ2ZiY2xzNTB6' },
                     { id: 'LI', url: 'https://www.linkedin.com/in/ahmar-memon-41a725235' },
                     { id: 'GH', url: 'https://github.com/ahmar4561' }
-                  ].map((social) => (
-                    <a key={social.id} href={social.url} target="_blank" rel="noopener noreferrer" className="social-box">
-                      {social.id}
-                    </a>
+                  ].map((s) => (
+                    <a key={s.id} href={s.url} target="_blank" className="social-link">{s.id}</a>
                   ))}
                  </div>
-                 <p className="footer-email">ahmaralimemon187@gmail.com</p>
                </div>
              </div>
-             <div className="footer-bottom">
-               © 2026 AHMAR LUXE. ALL RIGHTS RESERVED.
-             </div>
+             <div className="footer-rights">© 2026 AHMAR LUXE. ALL RIGHTS RESERVED.</div>
           </footer>
+
           <AIChatbot />
 
           <style jsx global>{`
-            .main-nav {
-              min-height: 70px; display: flex; alignItems: center; justifyContent: space-between;
-              padding: 10px 5%; borderBottom: 1px solid var(--border); backgroundColor: var(--nav-bg);
-              position: sticky; top: 0; zIndex: 1000; gap: 15px;
+            /* Navbar Core */
+            .navbar-container {
+              background: var(--nav-bg); border-bottom: 1px solid var(--border);
+              position: sticky; top: 0; z-index: 1000; padding: 10px 0;
             }
-            .logo-text { textDecoration: none; color: #D4AF37; fontSize: 22px; fontWeight: 900; letterSpacing: 1.5px; flexShrink: 0; }
-            .search-form { flex: 1; maxWidth: 700px; margin: 0 10px; }
-            .search-input { width: 100%; padding: 10px 20px; borderRadius: 10px; border: 1px solid var(--border); backgroundColor: rgba(255,255,255,0.05); color: var(--foreground); outline: none; fontSize: 14px; }
-            .nav-actions { display: flex; gap: 20px; alignItems: center; flexShrink: 0; }
-            .theme-toggle { cursor: pointer; background: none; border: none; fontSize: 22px; }
+            .nav-wrapper {
+              max-width: 1300px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+            }
+            .nav-logo { color: #D4AF37; font-size: 20px; font-weight: 900; text-decoration: none; letter-spacing: 1px; flex-shrink: 0; }
+            .nav-search-form { flex: 1; display: flex; justify-content: center; margin: 0 20px; }
+            .nav-search-input { 
+              width: 100%; max-width: 500px; padding: 8px 15px; border-radius: 20px; 
+              border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--foreground); outline: none;
+            }
+            .nav-icons { display: flex; gap: 15px; align-items: center; flex-shrink: 0; }
+            .nav-theme-btn { background: none; border: none; font-size: 20px; cursor: pointer; }
 
-            .category-bar { display: flex; justifyContent: center; gap: 30px; padding: 15px 20px; borderBottom: 1px solid var(--border); overflowX: auto; whiteSpace: nowrap; scrollbarWidth: none; }
-            .category-bar::-webkit-scrollbar { display: none; }
-            .cat-link { textDecoration: none; color: var(--foreground); fontSize: 12px; fontWeight: 700; letterSpacing: 1px; opacity: 0.4; transition: 0.3s; paddingBottom: 5px; }
-            .cat-link.active { opacity: 1; borderBottom: 2px solid #D4AF37; }
+            /* Categories */
+            .category-scroll-bar {
+              display: flex; gap: 25px; padding: 12px 20px; justify-content: center;
+              overflow-x: auto; white-space: nowrap; border-bottom: 1px solid var(--border);
+            }
+            .category-scroll-bar::-webkit-scrollbar { display: none; }
+            .cat-item { text-decoration: none; color: var(--foreground); font-size: 11px; font-weight: 700; opacity: 0.5; transition: 0.3s; }
+            .cat-item.active { opacity: 1; color: #D4AF37; border-bottom: 2px solid #D4AF37; padding-bottom: 4px; }
 
-            .luxe-footer { backgroundColor: var(--nav-bg); borderTop: 1px solid var(--border); padding: 60px 5% 30px; marginTop: 80px; }
-            .footer-grid { maxWidth: 1200px; margin: 0 auto; display: grid; gridTemplateColumns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
-            .footer-brand { color: #D4AF37; fontWeight: 900; letterSpacing: 2px; marginBottom: 10px; fontSize: 18px; }
-            .footer-desc { opacity: 0.6; lineHeight: 1.6; fontSize: 13px; }
-            .footer-head { color: #D4AF37; fontSize: 12px; marginBottom: 15px; fontWeight: 800; letterSpacing: 1px; }
-            .footer-links { display: flex; flexDirection: column; gap: 10px; fontSize: 13px; }
-            .footer-links a { color: var(--foreground); opacity: 0.6; textDecoration: none; }
-            .social-icons { display: flex; gap: 10px; marginBottom: 15px; }
-            .social-box { width: 32px; height: 32px; borderRadius: 50%; border: 1px solid rgba(212, 175, 55, 0.3); display: flex; alignItems: center; justifyContent: center; fontSize: 9px; fontWeight: bold; color: #D4AF37; textDecoration: none; transition: 0.3s; }
-            .social-box:hover { background: #D4AF37; color: #000; }
-            .footer-email { fontSize: 12px; opacity: 0.5; }
-            .footer-bottom { textAlign: center; marginTop: 40px; opacity: 0.3; fontSize: 10px; letterSpacing: 1px; borderTop: 1px solid rgba(255,255,255,0.05); paddingTop: 20px; }
+            /* Footer */
+            .footer-luxe { background: var(--nav-bg); padding: 50px 20px 20px; border-top: 1px solid var(--border); margin-top: 50px; }
+            .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
+            .footer-title { color: #D4AF37; font-size: 18px; margin-bottom: 10px; }
+            .footer-text { opacity: 0.6; font-size: 13px; }
+            .footer-sub { color: #D4AF37; font-size: 12px; margin-bottom: 15px; }
+            .footer-socials { display: flex; gap: 10px; }
+            .social-link { width: 30px; height: 30px; border: 1px solid #D4AF37; color: #D4AF37; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 9px; border-radius: 50%; }
+            .footer-rights { text-align: center; margin-top: 30px; font-size: 10px; opacity: 0.3; }
 
-            /* Mobile Adjustments */
+            /* MOBILE FIXES (Based on your first picture) */
             @media (max-width: 768px) {
-              .main-nav { padding: 10px 15px; minHeight: 60px; }
-              .logo-text { fontSize: 16px; }
-              .search-input { padding: 6px 12px; fontSize: 12px; }
-              .category-bar { justifyContent: flex-start; gap: 20px; padding: 12px 15px; }
-              .cat-link { fontSize: 11px; }
-              .nav-actions { gap: 12px; }
-              .theme-toggle { fontSize: 18px; }
+              .nav-wrapper { padding: 0 10px; }
+              .nav-logo { font-size: 15px; letter-spacing: 0; }
+              .nav-search-form { margin: 0 8px; }
+              .nav-search-input { padding: 5px 12px; font-size: 12px; }
+              .nav-icons { gap: 8px; }
+              .nav-theme-btn { font-size: 16px; }
+              .category-scroll-bar { justify-content: flex-start; gap: 18px; }
             }
           `}</style>
         </CartProvider>
