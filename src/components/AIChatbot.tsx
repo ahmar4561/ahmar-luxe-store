@@ -87,46 +87,56 @@ export default function AIChatbot() {
   };
 
   return (
-    <div style={{ position: "fixed", bottom: "30px", right: "30px", zIndex: 9999 }}>
+    <div style={{ position: "fixed", bottom: "25px", right: "25px", zIndex: 9999 }}>
       {/* Floating Toggle Button */}
       <motion.button 
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)} 
         style={{ 
-          width: "65px", height: "65px", borderRadius: "50%", 
+          width: "60px", height: "60px", borderRadius: "50%", 
           backgroundColor: "var(--background)", color: "var(--accent)", 
           border: "2px solid var(--accent)", cursor: "pointer", 
-          fontSize: "30px", boxShadow: "0 10px 30px rgba(0,0,0,0.2)", 
+          fontSize: "26px", boxShadow: "0 10px 30px rgba(0,0,0,0.3)", 
           display: "flex", alignItems: "center", justifyContent: "center", 
-          transition: "0.3s" 
+          transition: "0.3s", position: "relative", zIndex: 10001
         }}
       >
         {isOpen ? "×" : "💎"}
       </motion.button>
 
-      {/* Chat Window */}
+      {/* Chat Window - Optimized for Premium Floating Look */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 50, scale: 0.9, transformOrigin: "bottom right" }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
             style={{ 
-              position: "absolute", bottom: "85px", right: "0", 
-              width: "360px", height: "520px", 
+              position: "fixed", 
+              bottom: "100px", 
+              right: "25px", 
+              width: "calc(100vw - 50px)", // Responsive width for mobile
+              maxWidth: "380px", // Fixed width for laptop
+              height: "70vh", 
+              maxHeight: "600px",
               backgroundColor: "var(--background)", 
-              borderRadius: "24px", border: "1px solid var(--card-border)", 
-              display: "flex", flexDirection: "column", overflow: "hidden", 
-              boxShadow: "0 20px 60px rgba(0,0,0,0.15)" 
+              borderRadius: "24px", 
+              border: "1px solid var(--card-border)", 
+              display: "flex", 
+              flexDirection: "column", 
+              overflow: "hidden", 
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+              zIndex: 10000
             }}
           >
             {/* Header */}
             <div style={{ 
-              padding: "20px", backgroundColor: "var(--card-bg)", 
+              padding: "18px", backgroundColor: "var(--card-bg)", 
               borderBottom: "1px solid var(--accent)", color: "var(--accent)", 
               fontWeight: "900", textAlign: "center", 
-              fontSize: "14px", letterSpacing: "2px" 
+              fontSize: "13px", letterSpacing: "2px",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
             }}>
               AHMAR LUXE AI
             </div>
@@ -138,7 +148,7 @@ export default function AIChatbot() {
               style={{ 
                 flex: 1, padding: "20px", overflowY: "auto", 
                 display: "flex", flexDirection: "column", 
-                gap: "15px" 
+                gap: "15px", backgroundColor: "var(--background)"
               }}
             >
               {messages.map((m, i) => (
@@ -149,10 +159,12 @@ export default function AIChatbot() {
                   style={{ 
                     alignSelf: m.role === "user" ? "flex-end" : "flex-start", 
                     backgroundColor: m.role === "user" ? "var(--accent)" : "var(--card-bg)", 
-                    color: m.role === "user" ? "var(--btn-text)" : "var(--foreground)", 
-                    padding: "12px 18px", borderRadius: "18px", 
+                    color: m.role === "user" ? "#000" : "var(--foreground)", 
+                    padding: "12px 16px", borderRadius: "18px", 
+                    borderBottomRightRadius: m.role === "user" ? "4px" : "18px",
+                    borderBottomLeftRadius: m.role === "ai" ? "4px" : "18px",
                     maxWidth: "85%", fontSize: "13px", 
-                    lineHeight: "1.6", boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                    lineHeight: "1.5", boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                     whiteSpace: "pre-wrap",
                     border: m.role === "ai" ? "1px solid var(--card-border)" : "none"
                   }}
@@ -161,7 +173,6 @@ export default function AIChatbot() {
                 </motion.div>
               ))}
 
-              {/* Typing Indicator (Luxury Dots) */}
               {loading && (
                 <div style={{ 
                   alignSelf: "flex-start", backgroundColor: "var(--card-bg)", 
@@ -187,7 +198,7 @@ export default function AIChatbot() {
                 value={input} 
                 onChange={(e) => setInput(e.target.value)} 
                 onKeyPress={(e) => e.key === "Enter" && sendMessage()} 
-                placeholder="Ask about iPhone 15, Prices..." 
+                placeholder="Message AHMAR LUXE..." 
                 style={{ 
                   flex: 1, padding: "12px 15px", borderRadius: "12px", 
                   border: "1px solid var(--card-border)", 
@@ -199,10 +210,10 @@ export default function AIChatbot() {
                 onClick={sendMessage} 
                 disabled={loading}
                 style={{ 
-                  padding: "10px 18px", backgroundColor: "var(--accent)", 
-                  color: "var(--btn-text)", border: "none", borderRadius: "12px", 
+                  padding: "10px 15px", backgroundColor: "var(--accent)", 
+                  color: "#000", border: "none", borderRadius: "12px", 
                   cursor: loading ? "not-allowed" : "pointer", 
-                  fontWeight: "900", fontSize: "12px", opacity: loading ? 0.6 : 1
+                  fontWeight: "900", fontSize: "11px", opacity: loading ? 0.6 : 1
                 }}
               >
                 SEND
@@ -217,7 +228,7 @@ export default function AIChatbot() {
           width: 4px;
         }
         .chat-scroll::-webkit-scrollbar-thumb {
-          background: var(--card-border);
+          background: var(--accent);
           border-radius: 10px;
         }
         .dot-container {

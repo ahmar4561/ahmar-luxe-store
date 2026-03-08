@@ -7,7 +7,7 @@ import { CartProvider, useCart } from "@/context/CartContext";
 import AIChatbot from "@/components/AIChatbot";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- 1. ULTRA LUXE CART DRAWER ---
+// --- 1. ULTRA LUXE CART DRAWER (Updated for Professional Look) ---
 const CartDrawer = () => {
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, cartTotal } = useCart();
 
@@ -43,63 +43,75 @@ const CartDrawer = () => {
     <AnimatePresence>
       {isCartOpen && (
         <>
+          {/* Backdrop: Light and blurred for premium feel */}
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setIsCartOpen(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 1999 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(5px)', zIndex: 1999 }}
           />
 
           <motion.div 
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            transition={{ type: 'spring', damping: 28, stiffness: 200 }}
             style={{ 
-              position: 'fixed', right: 0, top: 0, height: '100vh', width: '100%', maxWidth: '400px', 
+              position: 'fixed', right: 0, top: 0, height: '100vh', 
+              width: '100%', maxWidth: '380px', // Responsive & Professional width
               background: 'var(--background)', borderLeft: '1px solid var(--border)', zIndex: 2000,
-              padding: '40px', display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 30px rgba(0,0,0,0.1)'
+              padding: '30px', display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 40px rgba(0,0,0,0.2)'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
               <div>
-                <h2 style={{ fontSize: '24px', fontWeight: '900', color: '#D4AF37', letterSpacing: '3px', margin: 0 }}>MY BAG</h2>
-                <div style={{ width: '40px', height: '2px', background: '#D4AF37', marginTop: '5px' }}></div>
+                <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#D4AF37', letterSpacing: '2px', margin: 0 }}>MY BAG</h2>
+                <div style={{ width: '30px', height: '2px', background: '#D4AF37', marginTop: '5px' }}></div>
               </div>
-              <button onClick={() => setIsCartOpen(false)} style={{ background: "none", border: "none", fontSize: "28px", color: "#D4AF37", cursor: "pointer" }}>✕</button>
+              <button 
+                onClick={() => setIsCartOpen(false)} 
+                style={{ background: "rgba(212, 175, 55, 0.1)", border: "none", borderRadius: "50%", width: "35px", height: "35px", color: "#D4AF37", cursor: "pointer", display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >✕</button>
             </div>
 
-            <div style={{ flex: 1, overflowY: "auto", paddingRight: "10px" }}>
+            {/* Cart Items Area */}
+            <div style={{ flex: 1, overflowY: "auto", paddingRight: "5px", marginBottom: "20px" }}>
               {cart.length === 0 ? (
-                <div style={{ textAlign: "center", marginTop: "100px", opacity: 0.5, color: 'var(--foreground)', letterSpacing: '1px' }}>YOUR ELITE BAG IS EMPTY.</div>
+                <div style={{ textAlign: "center", marginTop: "100px", opacity: 0.5, color: 'var(--foreground)', fontSize: '13px', letterSpacing: '1px' }}>
+                  YOUR ELITE BAG IS EMPTY.
+                </div>
               ) : (
                 cart.map((item: any) => (
-                  <motion.div layout key={item._id} style={{ display: "flex", gap: "15px", marginBottom: "25px", paddingBottom: "15px", borderBottom: "1px solid var(--border)", alignItems: 'center' }}>
-                    <img src={item.image || item.img} style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "12px", border: '1px solid var(--border)' }} alt={item.name} />
+                  <motion.div layout key={item._id} style={{ display: "flex", gap: "15px", marginBottom: "20px", paddingBottom: "15px", borderBottom: "1px solid var(--border)", alignItems: 'center' }}>
+                    <img src={item.image || item.img} style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "10px", border: '1px solid var(--border)' }} alt={item.name} />
                     <div style={{ flex: 1 }}>
-                      <h4 style={{ margin: 0, fontSize: "15px", color: 'var(--foreground)' }}>{item.name}</h4>
-                      <p style={{ margin: "5px 0", fontSize: "16px", fontWeight: "bold", color: '#D4AF37' }}>Rs. {item.price.toLocaleString()}</p>
-                      <button onClick={() => removeFromCart(item._id)} style={{ background: "none", border: "none", color: "#ff4444", cursor: "pointer", fontSize: "11px", fontWeight: 'bold' }}>REMOVE</button>
+                      <h4 style={{ margin: 0, fontSize: "14px", color: 'var(--foreground)', fontWeight: '600' }}>{item.name}</h4>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+                        <p style={{ margin: 0, fontSize: "15px", fontWeight: "bold", color: '#D4AF37' }}>Rs. {item.price.toLocaleString()}</p>
+                        <button onClick={() => removeFromCart(item._id)} style={{ background: "none", border: "none", color: "#ff4444", cursor: "pointer", fontSize: "10px", fontWeight: 'bold' }}>REMOVE</button>
+                      </div>
                     </div>
                   </motion.div>
                 ))
               )}
             </div>
 
+            {/* Footer / Checkout */}
             {cart.length > 0 && (
-              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "30px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "30px" }}>
-                  <span style={{ opacity: 0.6, color: 'var(--foreground)', letterSpacing: '1px' }}>ESTIMATED TOTAL</span>
-                  <span style={{ fontSize: "22px", fontWeight: "900", color: "#D4AF37" }}>Rs. {cartTotal.toLocaleString()}</span>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "20px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+                  <span style={{ opacity: 0.6, fontSize: '12px', color: 'var(--foreground)', letterSpacing: '1px' }}>ESTIMATED TOTAL</span>
+                  <span style={{ fontSize: "18px", fontWeight: "900", color: "#D4AF37" }}>Rs. {cartTotal.toLocaleString()}</span>
                 </div>
                 
                 <motion.button 
-                  whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(212, 175, 55, 0.4)" }}
+                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleCartCheckout}
                   style={{ 
-                    width: "100%", padding: "20px", 
-                    background: "linear-gradient(135deg, #D4AF37 0%, #F1D27B 50%, #D4AF37 100%)",
-                    color: "#000", border: "none", borderRadius: "15px", 
-                    fontWeight: "900", cursor: "pointer", fontSize: "14px", letterSpacing: '3px',
-                    display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px'
+                    width: "100%", padding: "16px", 
+                    background: "linear-gradient(135deg, #D4AF37 0%, #F1D27B 100%)",
+                    color: "#000", border: "none", borderRadius: "12px", 
+                    fontWeight: "900", cursor: "pointer", fontSize: "13px", letterSpacing: '2px',
+                    boxShadow: "0 10px 20px rgba(212, 175, 55, 0.2)"
                   }}
                 >
                   PROCEED TO PAY 💎
@@ -187,7 +199,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body suppressHydrationWarning style={{ margin: 0, padding: 0, backgroundColor: "var(--background)", color: "var(--foreground)" }}>
         <CartProvider>
-          {/* NAVIGATION (Fixed Mobile Visibility Issue) */}
+          {/* NAVIGATION */}
           <nav style={{ 
             padding: "10px 15px", display: "flex", justifyContent: "space-between", alignItems: "center",
             borderBottom: "1px solid var(--border)", backgroundColor: "var(--nav-bg)", position: "sticky", top: 0, zIndex: 1000
@@ -198,7 +210,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Link>
             </div>
 
-            {/* Added Search Bar back into nav with responsive constraints */}
             <form onSubmit={handleSearch} style={{ flex: 1, margin: "0 10px", maxWidth: "160px" }}>
               <input 
                 type="text" 
