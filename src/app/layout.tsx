@@ -42,7 +42,7 @@ const CartDrawer = () => {
               }
             </div>
             <div style={{ padding: '20px', borderTop: "1px solid var(--border)" }}>
-              <button onClick={handleCartCheckout} style={{ width: "100%", padding: "12px", background: "#D4AF37", color: "#000", border: "none", borderRadius: "10px", fontWeight: "900" }}>CHECKOUT</button>
+              <button onClick={handleCartCheckout} style={{ width: "100%", padding: "12px", background: "#D4AF37", color: "#000", border: "none", borderRadius: "10px", fontWeight: "900" }}>PROCEED TO PAY 💎</button>
             </div>
           </motion.div>
         </>
