@@ -3,12 +3,12 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext<any>(null);
 
-// --- 100% STABLE IMAGE MAPPING ---
+// --- 100% STABLE IMAGE MAPPING (ID Based) ---
 const getStableImage = (product: any) => {
   const cat = (product.category || "").toLowerCase().trim();
   const idStr = (product._id || product.id || "0").toString();
   
-  // ID se ek unique number nikalna
+  // ID se ek unique number nikalna (taake image fix rahe)
   let hash = 0;
   for (let i = 0; i < idStr.length; i++) {
     hash = idStr.charCodeAt(i) + ((hash << 5) - hash);
@@ -16,42 +16,42 @@ const getStableImage = (product: any) => {
   const index = Math.abs(hash);
 
   if (cat.includes('mobile')) {
-    const imgs = [
+    const images = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97",
       "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
       "https://images.unsplash.com/photo-1592890288564-76628a30a657",
       "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37"
     ];
-    return `${imgs[index % imgs.length]}?q=80&w=600&auto=format`;
+    return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
   if (cat.includes('watch')) {
-    const imgs = [
+    const images = [
       "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
       "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
       "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6",
       "https://images.unsplash.com/photo-1508057198894-247b23fe5ade"
     ];
-    return `${imgs[index % imgs.length]}?q=80&w=600&auto=format`;
+    return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
   if (cat.includes('laptop')) {
-    const imgs = [
+    const images = [
       "https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1229861/pexels-photo-1229861.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/812264/pexels-photo-812264.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg?auto=compress&cs=tinysrgb&w=600"
     ];
-    return imgs[index % imgs.length];
+    return images[index % images.length];
   }
 
   if (cat.includes('gaming')) {
-    const imgs = [
+    const images = [
       "https://images.unsplash.com/photo-1542751371-adc38448a05e",
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f",
       "https://images.unsplash.com/photo-1511512578047-dfb367046420"
     ];
-    return `${imgs[index % imgs.length]}?q=80&w=600&auto=format`;
+    return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
   return product.image; 
@@ -73,7 +73,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [cart]);
 
   const addToCart = (product: any) => {
-    // LOCK IMAGE TO ID
+    // LOCK IMAGE TO ID - Hamesha ke liye match karega
     const fixedProduct = {
       ...product,
       image: getStableImage(product)
@@ -113,4 +113,4 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useCart = () => useContext(CartContext); 
+export const useCart = () => useContext(CartContext);
