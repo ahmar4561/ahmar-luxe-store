@@ -46,6 +46,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
       whileHover={{ y: -8 }} 
       className="professional-card"
     >
+      {/* IMAGE CONTAINER - Always fixed ratio */}
       <div className="img-container">
         <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.4 }} style={{ width: "100%", height: "100%", position: "relative" }}>
           <Image 
@@ -58,6 +59,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
         </motion.div>
       </div>
 
+      {/* CONTENT SECTION - Pushes button to bottom */}
       <div className="card-content">
         <div style={{ marginBottom: "10px" }}>
           <span className="cat-label">{product.category.toUpperCase()}</span>
@@ -78,32 +80,31 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
   );
 });
 
-export default function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
-  // FIXED: Using 'id' instead of 'slug' to match your dynamic route folder name [id]
+export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params); 
-  const id = resolvedParams.id; 
+  const slug = resolvedParams.slug;
   const { addToCart, globalProducts } = useCart(); 
   const [visibleCount, setVisibleCount] = useState(12);
 
   const filtered = useMemo(() => {
-    const sCat = id.toLowerCase().trim();
+    const sCat = slug.toLowerCase().trim();
     if (sCat === 'all' || sCat === 'collection') return globalProducts;
     return globalProducts.filter((p: any) => {
       const pCat = (p.category || "").toLowerCase().trim();
       return pCat.includes(sCat) || sCat.includes(pCat.replace('s', ''));
     });
-  }, [globalProducts, id]);
+  }, [globalProducts, slug]);
 
   const displayProducts = filtered.slice(0, visibleCount);
 
   return (
     <div className="page-wrapper">
-      <h1 className="category-title">{id}</h1>
+      <h1 className="category-title">{slug}</h1>
       
       <div className="product-grid">
         <AnimatePresence mode="popLayout">
           {displayProducts.map((product: any, index: number) => (
-            <ProductCard key={product._id || index} product={product} index={index} addToCart={addToCart} />
+            <ProductCard key={product._id} product={product} index={index} addToCart={addToCart} />
           ))}
         </AnimatePresence>
       </div>
@@ -131,21 +132,24 @@ export default function CategoryPage({ params }: { params: Promise<{ id: string 
           letter-spacing: 4px;
         }
 
+        /* GRID: 2 columns mobile, dynamic laptop */
         .product-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 15px;
           max-width: 1400px;
           margin: 0 auto;
+          grid-auto-rows: 1fr;
         }
 
-        @media (min-width: 1024px) {
+        @media (min-width: 768px) {
           .product-grid {
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 30px;
           }
         }
 
+        /* PROFESSIONAL CARD STYLING */
         .professional-card {
           border: 1px solid var(--card-border);
           border-radius: 20px;
