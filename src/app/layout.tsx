@@ -281,23 +281,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <CartDrawer />
 
-          {/* PROFESSIONAL LUXURY FOOTER */}
+          {/* PROFESSIONAL LUXURY FOOTER - Optimized for Laptop & Mobile */}
           <footer style={{ 
             backgroundColor: "var(--nav-bg)", 
             borderTop: "1px solid var(--border)", 
-            padding: "60px 20px 30px", 
-            marginTop: "80px"
+            padding: "80px 24px 40px", 
+            marginTop: "100px"
           }}>
             <div style={{ 
-              maxWidth: "1100px", 
+              maxWidth: "1000px", // Laptop par width control ke liye
               margin: "0 auto", 
               display: "grid", 
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", 
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", 
               gap: "40px",
               textAlign: "left"
             }}>
               {/* Brand Section */}
-              <div style={{ gridColumn: "span 1" }}>
+              <div>
                 <h2 style={{ color: "#D4AF37", fontWeight: "900", letterSpacing: "3px", marginBottom: "15px", fontSize: "20px" }}>AHMAR LUXE</h2>
                 <p style={{ opacity: 0.7, lineHeight: "1.6", fontSize: "13px", maxWidth: "280px" }}>
                   Elevating your lifestyle with the world's most exclusive collections.
@@ -329,9 +329,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <motion.div 
                         whileHover={{ scale: 1.1, backgroundColor: "#D4AF37", color: "#000" }}
                         style={{ 
-                          width: "32px", height: "32px", borderRadius: "50%", border: "1px solid rgba(212, 175, 55, 0.3)", 
+                          width: "35px", height: "35px", borderRadius: "50%", border: "1px solid rgba(212, 175, 55, 0.3)", 
                           display: "flex", alignItems: "center", justifyContent: "center", 
-                          fontSize: "9px", fontWeight: "bold", color: "#D4AF37", cursor: "pointer"
+                          fontSize: "9px", fontWeight: "bold", color: "#D4AF37", cursor: "pointer", transition: "0.3s"
                         }}
                       >
                         {social.id}
@@ -345,7 +345,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             {/* Bottom Bar */}
             <div style={{ 
-              maxWidth: "1100px", 
+              maxWidth: "1000px", 
               margin: "50px auto 0", 
               paddingTop: "20px", 
               borderTop: "1px solid rgba(255,255,255,0.05)", 
@@ -358,7 +358,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span style={{ fontSize: "10px", opacity: 0.4, letterSpacing: "1.5px", fontWeight: "500" }}>
                 © 2026 AHMAR LUXE. ALL RIGHTS RESERVED.
               </span>
-              <div style={{ display: "flex", gap: "15px", opacity: 0.4, filter: "grayscale(1) brightness(1.5)" }}>
+              <div style={{ display: "flex", gap: "20px", opacity: 0.4, filter: "grayscale(1) brightness(1.2)" }}>
                 <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: "12px" }} />
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: "12px" }} />
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style={{ height: "12px" }} />
