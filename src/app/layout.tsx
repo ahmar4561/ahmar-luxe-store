@@ -6,7 +6,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { CartProvider, useCart } from "@/context/CartContext";
 import AIChatbot from "@/components/AIChatbot";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from 'next/image';
 
+// --- 1. CART DRAWER ---
 const CartDrawer = () => {
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, cartTotal } = useCart();
   const handleCartCheckout = async () => {
@@ -37,6 +39,7 @@ const CartDrawer = () => {
           />
           <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="cart-drawer-container"
             style={{ 
               position: 'fixed', right: '10px', top: '10px', bottom: '10px',
               height: 'calc(100vh - 20px)', width: 'calc(100% - 20px)', maxWidth: '420px', 
@@ -84,6 +87,7 @@ const CartDrawer = () => {
   );
 };
 
+// --- 2. BAG ICON ---
 const BagIcon = () => {
   const { setIsCartOpen, cartCount } = useCart();
   return (
@@ -93,6 +97,7 @@ const BagIcon = () => {
   );
 };
 
+// --- 3. ROOT LAYOUT ---
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -123,83 +128,120 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body suppressHydrationWarning style={{ margin: 0, backgroundColor: "var(--background)", color: "var(--foreground)" }}>
         <CartProvider>
-          {/* PROFESSIONAL NAV BAR */}
-          <nav style={{ 
-            minHeight: "75px", display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "10px 5%", borderBottom: "1px solid var(--border)", backgroundColor: "var(--nav-bg)",
-            position: "sticky", top: 0, zIndex: 1000, gap: "20px"
-          }}>
-            <Link href="/" style={{ textDecoration: 'none', color: '#D4AF37', fontSize: "22px", fontWeight: "900", letterSpacing: "1.5px", flexShrink: 0 }}>
-              AHMAR LUXE
-            </Link>
+          {/* PROFESSIONAL NAV BAR - RESPONSIVE */}
+          <nav className="main-nav">
+            <Link href="/" className="logo-text">AHMAR LUXE</Link>
 
-            <form onSubmit={handleSearch} style={{ flex: 1, maxWidth: "700px", margin: "0 20px" }}>
+            <form onSubmit={handleSearch} className="search-form">
               <input 
                 type="text" placeholder="Search premium collection..." 
                 value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ 
-                  width: "100%", padding: "12px 25px", borderRadius: "10px", border: "1px solid var(--border)", 
-                  backgroundColor: "rgba(255,255,255,0.05)", color: "var(--foreground)", outline: "none", fontSize: "14px"
-                }} 
+                className="search-input"
               />
             </form>
 
-            <div style={{ display: "flex", gap: "25px", alignItems: "center", flexShrink: 0 }}>
-              <button onClick={toggleDarkMode} style={{ cursor: "pointer", background: "none", border: "none", fontSize: "22px" }}>
+            <div className="nav-actions">
+              <button onClick={toggleDarkMode} className="theme-toggle">
                 {darkMode ? "☀️" : "🌙"}
               </button>
               <BagIcon />
             </div>
           </nav>
 
-          {/* CATEGORIES */}
-          <div style={{ 
-            display: "flex", justifyContent: "center", gap: "30px", padding: "15px 20px", 
-            borderBottom: "1px solid var(--border)", overflowX: "auto", whiteSpace: "nowrap", scrollbarWidth: "none"
-          }}>
+          {/* CATEGORIES - SCROLLABLE ON MOBILE, CENTERED ON LAPTOP */}
+          <div className="category-bar">
             {["ALL", "WATCHES", "MOBILE", "FASHION", "ELECTRONICS", "GAMING", "LAPTOP"].map((cat) => (
               <Link key={cat} href={cat === "ALL" ? "/" : `/category/${cat.toLowerCase()}`}
-                style={{ 
-                  textDecoration: "none", color: "var(--foreground)", fontSize: "12px", fontWeight: "700", letterSpacing: "1px",
-                  opacity: pathname.includes(cat.toLowerCase()) || (pathname === "/" && cat === "ALL") ? 1 : 0.4,
-                  borderBottom: pathname.includes(cat.toLowerCase()) || (pathname === "/" && cat === "ALL") ? "2px solid #D4AF37" : "none",
-                  paddingBottom: "5px"
-                }}>
+                className={`cat-link ${ (pathname.includes(cat.toLowerCase()) || (pathname === "/" && cat === "ALL")) ? "active" : "" }`}>
                 {cat}
               </Link>
             ))}
           </div>
 
-          {/* MAIN CONTENT CONTAINER (Optimized for 4-product grid look) */}
           <main style={{ minHeight: "85vh", maxWidth: "1400px", margin: "0 auto" }}>
             {mounted ? children : null}
           </main>
 
           <CartDrawer />
 
-          <footer style={{ backgroundColor: "var(--nav-bg)", borderTop: "1px solid var(--border)", padding: "80px 5% 40px", marginTop: "100px" }}>
-             <div style={{ maxWidth: "1200px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "50px" }}>
+          {/* LUXURY FOOTER WITH SOCIALS - FIXED FOR LAPTOP */}
+          <footer className="luxe-footer">
+             <div className="footer-grid">
                <div>
-                 <h2 style={{ color: "#D4AF37", fontWeight: "900", letterSpacing: "2px", marginBottom: "15px", fontSize: "20px" }}>AHMAR LUXE</h2>
-                 <p style={{ opacity: 0.6, lineHeight: "1.8", fontSize: "14px" }}>Elevating your lifestyle with the world's most exclusive collections.</p>
+                 <h2 className="footer-brand">AHMAR LUXE</h2>
+                 <p className="footer-desc">Elevating your lifestyle with the world's most exclusive collections.</p>
                </div>
                <div>
-                 <h4 style={{ color: "#D4AF37", fontSize: "13px", marginBottom: "20px", fontWeight: "800" }}>NAVIGATE</h4>
-                 <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "14px" }}>
-                    <Link href="/" style={{ color: "var(--foreground)", opacity: 0.6, textDecoration: "none" }}>Home</Link>
-                    <Link href="/privacy" style={{ color: "var(--foreground)", opacity: 0.6, textDecoration: "none" }}>Privacy Policy</Link>
+                 <h4 className="footer-head">NAVIGATE</h4>
+                 <div className="footer-links">
+                    <Link href="/">Home</Link>
+                    <Link href="/privacy">Privacy Policy</Link>
                  </div>
                </div>
                <div>
-                 <h4 style={{ color: "#D4AF37", fontSize: "13px", marginBottom: "20px", fontWeight: "800" }}>CONTACT</h4>
-                 <p style={{ fontSize: "14px", opacity: 0.5 }}>ahmaralimemon187@gmail.com</p>
+                 <h4 className="footer-head">CONNECT</h4>
+                 <div className="social-icons">
+                  {[
+                    { id: 'FB', url: 'https://www.facebook.com/ahmarali.memon' },
+                    { id: 'IG', url: 'https://www.instagram.com/ahmar_264?igsh=cHhhZ2ZiY2xzNTB6' },
+                    { id: 'LI', url: 'https://www.linkedin.com/in/ahmar-memon-41a725235' },
+                    { id: 'GH', url: 'https://github.com/ahmar4561' }
+                  ].map((social) => (
+                    <a key={social.id} href={social.url} target="_blank" rel="noopener noreferrer" className="social-box">
+                      {social.id}
+                    </a>
+                  ))}
+                 </div>
+                 <p className="footer-email">ahmaralimemon187@gmail.com</p>
                </div>
              </div>
-             <div style={{ textAlign: "center", marginTop: "60px", opacity: 0.3, fontSize: "11px", letterSpacing: "1px" }}>
+             <div className="footer-bottom">
                © 2026 AHMAR LUXE. ALL RIGHTS RESERVED.
              </div>
           </footer>
           <AIChatbot />
+
+          <style jsx global>{`
+            .main-nav {
+              min-height: 70px; display: flex; alignItems: center; justifyContent: space-between;
+              padding: 10px 5%; borderBottom: 1px solid var(--border); backgroundColor: var(--nav-bg);
+              position: sticky; top: 0; zIndex: 1000; gap: 15px;
+            }
+            .logo-text { textDecoration: none; color: #D4AF37; fontSize: 22px; fontWeight: 900; letterSpacing: 1.5px; flexShrink: 0; }
+            .search-form { flex: 1; maxWidth: 700px; margin: 0 10px; }
+            .search-input { width: 100%; padding: 10px 20px; borderRadius: 10px; border: 1px solid var(--border); backgroundColor: rgba(255,255,255,0.05); color: var(--foreground); outline: none; fontSize: 14px; }
+            .nav-actions { display: flex; gap: 20px; alignItems: center; flexShrink: 0; }
+            .theme-toggle { cursor: pointer; background: none; border: none; fontSize: 22px; }
+
+            .category-bar { display: flex; justifyContent: center; gap: 30px; padding: 15px 20px; borderBottom: 1px solid var(--border); overflowX: auto; whiteSpace: nowrap; scrollbarWidth: none; }
+            .category-bar::-webkit-scrollbar { display: none; }
+            .cat-link { textDecoration: none; color: var(--foreground); fontSize: 12px; fontWeight: 700; letterSpacing: 1px; opacity: 0.4; transition: 0.3s; paddingBottom: 5px; }
+            .cat-link.active { opacity: 1; borderBottom: 2px solid #D4AF37; }
+
+            .luxe-footer { backgroundColor: var(--nav-bg); borderTop: 1px solid var(--border); padding: 60px 5% 30px; marginTop: 80px; }
+            .footer-grid { maxWidth: 1200px; margin: 0 auto; display: grid; gridTemplateColumns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+            .footer-brand { color: #D4AF37; fontWeight: 900; letterSpacing: 2px; marginBottom: 10px; fontSize: 18px; }
+            .footer-desc { opacity: 0.6; lineHeight: 1.6; fontSize: 13px; }
+            .footer-head { color: #D4AF37; fontSize: 12px; marginBottom: 15px; fontWeight: 800; letterSpacing: 1px; }
+            .footer-links { display: flex; flexDirection: column; gap: 10px; fontSize: 13px; }
+            .footer-links a { color: var(--foreground); opacity: 0.6; textDecoration: none; }
+            .social-icons { display: flex; gap: 10px; marginBottom: 15px; }
+            .social-box { width: 32px; height: 32px; borderRadius: 50%; border: 1px solid rgba(212, 175, 55, 0.3); display: flex; alignItems: center; justifyContent: center; fontSize: 9px; fontWeight: bold; color: #D4AF37; textDecoration: none; transition: 0.3s; }
+            .social-box:hover { background: #D4AF37; color: #000; }
+            .footer-email { fontSize: 12px; opacity: 0.5; }
+            .footer-bottom { textAlign: center; marginTop: 40px; opacity: 0.3; fontSize: 10px; letterSpacing: 1px; borderTop: 1px solid rgba(255,255,255,0.05); paddingTop: 20px; }
+
+            /* Mobile Adjustments */
+            @media (max-width: 768px) {
+              .main-nav { padding: 10px 15px; minHeight: 60px; }
+              .logo-text { fontSize: 16px; }
+              .search-input { padding: 6px 12px; fontSize: 12px; }
+              .category-bar { justifyContent: flex-start; gap: 20px; padding: 12px 15px; }
+              .cat-link { fontSize: 11px; }
+              .nav-actions { gap: 12px; }
+              .theme-toggle { fontSize: 18px; }
+            }
+          `}</style>
         </CartProvider>
       </body>
     </html>
