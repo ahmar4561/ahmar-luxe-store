@@ -19,7 +19,7 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 2. WATCHES (No Changes - Already Fixed)
+  // 2. WATCHES (No Changes)
   if (cat.includes('watch')) {
     const images = [
       "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
@@ -53,19 +53,19 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 5. GAMING (FIXED: Stable Links to remove Empty Boxes)
+  // 5. GAMING (FIXED WITH NEW PERMANENT LINKS)
   if (cat.includes('gaming')) {
     const images = [
       "https://images.unsplash.com/photo-1542751371-adc38448a05e",
       "https://images.unsplash.com/photo-1511512578047-dfb367046420",
-      "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf",
-      "https://images.unsplash.com/photo-1552820728-8b83bb6b773f",
-      "https://images.unsplash.com/photo-1580234811497-9bd7fd5f3e35"
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f",
+      "https://images.unsplash.com/photo-1593305841991-05c297ba4575"
     ];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 6. LAPTOP
+  // 6. LAPTOP (No Changes)
   if (cat.includes('laptop')) {
     const images = [
       "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
