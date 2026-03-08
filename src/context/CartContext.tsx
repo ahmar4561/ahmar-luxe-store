@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext<any>(null);
 
-// --- STABLE IMAGE LOGIC (Bina kisi tabdeeli ke) ---
+// --- STABLE IMAGE LOGIC (No Changes) ---
 export const getStableImage = (product: any) => {
   const cat = (product.category || "").toLowerCase().trim();
   const idStr = (product._id || product.id || "0").toString();
@@ -38,23 +38,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   
   // --- SPEED BOOSTER STATES ---
-  const [globalProducts, setGlobalProducts] = useState([]); 
+  const [globalProducts, setGlobalProducts] = useState<any[]>([]); 
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-  // 1. Ek hi baar data fetch karna (Global Cache)
   useEffect(() => {
+    // --- ULTRA SPEED LOGIC START ---
+    // 1. Instant check: Kya browser ki memory mein data pada hai?
+    const cachedProducts = localStorage.getItem("global_products_cache");
+    if (cachedProducts) {
+      setGlobalProducts(JSON.parse(cachedProducts));
+      setIsDataLoaded(true); // Isse refresh par products foran dikhenge
+    }
+
+    // 2. Background Fetch: Products update bhi karte raho piche se
     const fetchAll = async () => {
       try {
         const res = await fetch("/api/products");
         const data = await res.json();
         setGlobalProducts(data);
         setIsDataLoaded(true);
+        // Save for next refresh
+        localStorage.setItem("global_products_cache", JSON.stringify(data));
       } catch (err) { console.error("Fetch error:", err); }
     };
     fetchAll();
-  }, []);
+    // --- ULTRA SPEED LOGIC END ---
 
-  useEffect(() => {
     const savedCart = localStorage.getItem("ahmar_cart");
     if (savedCart) {
       try { setCart(JSON.parse(savedCart)); } catch (err) { console.error(err); }
@@ -94,7 +103,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     <CartContext.Provider value={{ 
       cart, addToCart, removeFromCart, clearCart, 
       cartCount, cartTotal, isCartOpen, setIsCartOpen,
-      globalProducts, isDataLoaded // Ye speed ke liye export kiya
+      globalProducts, isDataLoaded 
     }}>
       {children}
     </CartContext.Provider>
