@@ -6,8 +6,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { CartProvider, useCart } from "@/context/CartContext";
 import AIChatbot from "@/components/AIChatbot";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from 'next/image';
 
-// --- 1. ULTRA LUXE CART DRAWER (Updated for Professional Look) ---
+// --- 1. ULTRA LUXE CART DRAWER (Updated for Professional & Responsive Look) ---
 const CartDrawer = () => {
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, cartTotal } = useCart();
 
@@ -43,49 +44,61 @@ const CartDrawer = () => {
     <AnimatePresence>
       {isCartOpen && (
         <>
-          {/* Backdrop: Light and blurred for premium feel */}
+          {/* Backdrop: Blurred for premium feel */}
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setIsCartOpen(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(5px)', zIndex: 1999 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 1999 }}
           />
 
           <motion.div 
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 28, stiffness: 200 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="cart-drawer-container"
             style={{ 
-              position: 'fixed', right: 0, top: 0, height: '100vh', 
-              width: '100%', maxWidth: '380px', // Responsive & Professional width
-              background: 'var(--background)', borderLeft: '1px solid var(--border)', zIndex: 2000,
-              padding: '30px', display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 40px rgba(0,0,0,0.2)'
+              position: 'fixed', 
+              right: '10px', 
+              top: '10px', 
+              bottom: '10px',
+              height: 'calc(100vh - 20px)', 
+              width: 'calc(100% - 20px)',
+              maxWidth: '420px', 
+              background: 'var(--background)', 
+              border: '1px solid var(--border)', 
+              zIndex: 2000,
+              display: 'flex', 
+              flexDirection: 'column', 
+              boxShadow: '-10px 0 40px rgba(0,0,0,0.4)',
+              borderRadius: '24px', // Professional rounded look
+              overflow: 'hidden'
             }}
           >
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+            <div style={{ padding: '25px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
               <div>
-                <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#D4AF37', letterSpacing: '2px', margin: 0 }}>MY BAG</h2>
-                <div style={{ width: '30px', height: '2px', background: '#D4AF37', marginTop: '5px' }}></div>
+                <h2 style={{ fontSize: '18px', fontWeight: '900', color: '#D4AF37', letterSpacing: '2px', margin: 0 }}>MY BAG</h2>
+                <span style={{ fontSize: '10px', opacity: 0.5, color: 'var(--foreground)' }}>{cart.length} ITEMS SELECTED</span>
               </div>
               <button 
                 onClick={() => setIsCartOpen(false)} 
-                style={{ background: "rgba(212, 175, 55, 0.1)", border: "none", borderRadius: "50%", width: "35px", height: "35px", color: "#D4AF37", cursor: "pointer", display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ background: "rgba(212, 175, 55, 0.1)", border: "none", borderRadius: "50%", width: "32px", height: "32px", color: "#D4AF37", cursor: "pointer", display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >✕</button>
             </div>
 
             {/* Cart Items Area */}
-            <div style={{ flex: 1, overflowY: "auto", paddingRight: "5px", marginBottom: "20px" }}>
+            <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: 'flex', flexDirection: 'column', gap: '15px' }}>
               {cart.length === 0 ? (
-                <div style={{ textAlign: "center", marginTop: "100px", opacity: 0.5, color: 'var(--foreground)', fontSize: '13px', letterSpacing: '1px' }}>
+                <div style={{ textAlign: "center", marginTop: "100px", opacity: 0.5, color: 'var(--foreground)', fontSize: '12px', fontWeight: 'bold' }}>
                   YOUR ELITE BAG IS EMPTY.
                 </div>
               ) : (
                 cart.map((item: any) => (
-                  <motion.div layout key={item._id} style={{ display: "flex", gap: "15px", marginBottom: "20px", paddingBottom: "15px", borderBottom: "1px solid var(--border)", alignItems: 'center' }}>
-                    <img src={item.image || item.img} style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "10px", border: '1px solid var(--border)' }} alt={item.name} />
+                  <motion.div layout key={item._id} style={{ display: "flex", gap: "15px", padding: "12px", background: 'rgba(255,255,255,0.03)', borderRadius: "16px", border: "1px solid var(--border)", alignItems: 'center' }}>
+                    <img src={item.image || item.img} style={{ width: "65px", height: "65px", objectFit: "cover", borderRadius: "12px" }} alt={item.name} />
                     <div style={{ flex: 1 }}>
-                      <h4 style={{ margin: 0, fontSize: "14px", color: 'var(--foreground)', fontWeight: '600' }}>{item.name}</h4>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
-                        <p style={{ margin: 0, fontSize: "15px", fontWeight: "bold", color: '#D4AF37' }}>Rs. {item.price.toLocaleString()}</p>
+                      <h4 style={{ margin: "0 0 4px", fontSize: "13px", color: 'var(--foreground)', fontWeight: '600' }}>{item.name}</h4>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <p style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: '#D4AF37' }}>Rs. {item.price.toLocaleString()}</p>
                         <button onClick={() => removeFromCart(item._id)} style={{ background: "none", border: "none", color: "#ff4444", cursor: "pointer", fontSize: "10px", fontWeight: 'bold' }}>REMOVE</button>
                       </div>
                     </div>
@@ -95,29 +108,26 @@ const CartDrawer = () => {
             </div>
 
             {/* Footer / Checkout */}
-            {cart.length > 0 && (
-              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "20px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
-                  <span style={{ opacity: 0.6, fontSize: '12px', color: 'var(--foreground)', letterSpacing: '1px' }}>ESTIMATED TOTAL</span>
-                  <span style={{ fontSize: "18px", fontWeight: "900", color: "#D4AF37" }}>Rs. {cartTotal.toLocaleString()}</span>
-                </div>
-                
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleCartCheckout}
-                  style={{ 
-                    width: "100%", padding: "16px", 
-                    background: "linear-gradient(135deg, #D4AF37 0%, #F1D27B 100%)",
-                    color: "#000", border: "none", borderRadius: "12px", 
-                    fontWeight: "900", cursor: "pointer", fontSize: "13px", letterSpacing: '2px',
-                    boxShadow: "0 10px 20px rgba(212, 175, 55, 0.2)"
-                  }}
-                >
-                  PROCEED TO PAY 💎
-                </motion.button>
+            <div style={{ padding: '25px', background: 'var(--nav-bg)', borderTop: "1px solid var(--border)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
+                <span style={{ opacity: 0.6, fontSize: '11px', color: 'var(--foreground)', fontWeight: 'bold' }}>TOTAL ESTIMATE</span>
+                <span style={{ fontSize: "18px", fontWeight: "900", color: "#D4AF37" }}>Rs. {cartTotal.toLocaleString()}</span>
               </div>
-            )}
+              
+              <button 
+                onClick={handleCartCheckout}
+                disabled={cart.length === 0}
+                style={{ 
+                  width: "100%", padding: "14px", 
+                  background: cart.length === 0 ? "#333" : "linear-gradient(135deg, #D4AF37 0%, #F1D27B 100%)",
+                  color: "#000", border: "none", borderRadius: "12px", 
+                  fontWeight: "900", cursor: cart.length === 0 ? "not-allowed" : "pointer", fontSize: "13px", letterSpacing: '1px',
+                  boxShadow: "0 10px 20px rgba(0,0,0,0.2)"
+                }}
+              >
+                PROCEED TO PAY 💎
+              </button>
+            </div>
           </motion.div>
         </>
       )}
