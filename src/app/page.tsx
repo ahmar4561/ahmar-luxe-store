@@ -6,6 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
+// ISR: Har 60 seconds baad background mein data refresh hoga
+export const revalidate = 60;
+
 const Chatbot = dynamic(() => import('@/components/AIChatbot'), { ssr: false });
 
 // --- STABLE IMAGES LOGIC ---
@@ -41,7 +44,15 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
     >
       <div style={{ position: "relative", borderRadius: "12px", height: "160px", overflow: "hidden", backgroundColor: "#000" }}>
         <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.5 }} style={{ width: "100%", height: "100%", position: "relative" }}>
-          <Image src={displayImage} alt={product.name} fill sizes="(max-width: 768px) 50vw, 240px" priority={index < 8} unoptimized style={{ objectFit: "cover" }} />
+          <Image 
+            src={displayImage} 
+            alt={product.name} 
+            fill 
+            sizes="(max-width: 768px) 50vw, 240px" 
+            priority={index < 4} // FAST LOAD: Pehli 4 images foran load hon gi
+            unoptimized 
+            style={{ objectFit: "cover" }} 
+          />
         </motion.div>
       </div>
       <div style={{ marginTop: "10px" }}>
@@ -64,9 +75,7 @@ function HomeContent() {
   
   const search = searchParams.get("search")?.toLowerCase() || "";
   const category = searchParams.get("category")?.toLowerCase() || "all";
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
   useEffect(() => { setVisibleCount(12); }, [category, search]);
 
   const filteredResults = useMemo(() => {
@@ -79,8 +88,6 @@ function HomeContent() {
   }, [globalProducts, search, category]);
 
   const displayProducts = filteredResults.slice(0, visibleCount);
-
-  if (!mounted) return null;
 
   return (
     <div style={{ padding: "15px", backgroundColor: "var(--background)", minHeight: "100vh" }}>
@@ -120,7 +127,7 @@ function HomeContent() {
 
         @media (min-width: 1024px) {
           .product-grid {
-            grid-template-columns: repeat(4, 1fr); /* FIXED: Always 4 products on Laptop */
+            grid-template-columns: repeat(4, 1fr); 
             gap: 25px;
           }
         }
@@ -134,7 +141,7 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div style={{ textAlign: 'center', paddingTop: '50px', color: '#D4AF37' }}>LOADING AHMAR LUXE...</div>}>
       <HomeContent />
     </Suspense>
   );
