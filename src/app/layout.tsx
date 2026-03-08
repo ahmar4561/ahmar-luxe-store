@@ -7,20 +7,23 @@ import { CartProvider, useCart } from "@/context/CartContext";
 import AIChatbot from "@/components/AIChatbot";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- CART DRAWER & BAG ICON (No Logic Change) ---
+// --- CART DRAWER & BAG ICON (Remove Logic Added) ---
 const CartDrawer = () => {
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, cartTotal } = useCart();
+  
   const handleCartCheckout = async () => {
     if (cart.length === 0) return alert("Your bag is empty!");
     try {
       const response = await fetch("/api/checkout", { 
-        method: "POST", body: JSON.stringify({ items: cart.map((i:any)=>({name:i.name, price:i.price, quantity:i.qty, image:i.image||i.img})) }), 
+        method: "POST", 
+        body: JSON.stringify({ items: cart.map((i:any)=>({name:i.name, price:i.price, quantity:i.qty, image:i.image||i.img})) }), 
         headers: { "Content-Type": "application/json" }
       });
       const data = await response.json();
       if (data.url) window.location.href = data.url;
     } catch (err) { alert("System Busy."); }
   };
+
   return (
     <AnimatePresence>
       {isCartOpen && (
@@ -31,18 +34,36 @@ const CartDrawer = () => {
               <h2 style={{ fontSize: '18px', fontWeight: '900', color: '#D4AF37' }}>MY BAG</h2>
               <button onClick={() => setIsCartOpen(false)} style={{ background: "none", border: "none", color: "#D4AF37", cursor: "pointer", fontSize: "20px" }}>✕</button>
             </div>
+            
             <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
               {cart.length === 0 ? <div style={{ textAlign: "center", marginTop: "50px", opacity: 0.5 }}>EMPTY BAG</div> : 
                 cart.map((item: any) => (
-                  <div key={item._id} style={{ display: "flex", gap: "15px", marginBottom: "15px", alignItems: 'center' }}>
-                    <img src={item.image || item.img} style={{ width: "50px", height: "50px", borderRadius: "8px" }} alt="" />
-                    <div style={{ flex: 1 }}><h4 style={{ fontSize: "12px", margin: 0 }}>{item.name}</h4><p style={{ color: '#D4AF37', margin: 0 }}>Rs. {item.price}</p></div>
+                  <div key={item._id} style={{ display: "flex", gap: "15px", marginBottom: "15px", alignItems: 'center', borderBottom: '1px solid rgba(212,175,55,0.1)', paddingBottom: '10px' }}>
+                    <img src={item.image || item.img} style={{ width: "60px", height: "60px", borderRadius: "12px", objectFit: 'cover' }} alt="" />
+                    <div style={{ flex: 1 }}>
+                      <h4 style={{ fontSize: "12px", margin: 0, fontWeight: '700' }}>{item.name}</h4>
+                      <p style={{ color: '#D4AF37', margin: "4px 0", fontSize: '14px', fontWeight: '800' }}>Rs. {item.price.toLocaleString()}</p>
+                    </div>
+                    {/* REMOVE BUTTON ADDED HERE */}
+                    <button 
+                      onClick={() => removeFromCart(item._id)} 
+                      style={{ background: 'rgba(255,0,0,0.1)', color: '#ff4d4d', border: 'none', borderRadius: '8px', padding: '8px 12px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
+                    >
+                      🗑️
+                    </button>
                   </div>
                 ))
               }
             </div>
-            <div style={{ padding: '20px', borderTop: "1px solid var(--border)" }}>
-              <button onClick={handleCartCheckout} style={{ width: "100%", padding: "12px", background: "#D4AF37", color: "#000", border: "none", borderRadius: "10px", fontWeight: "900" }}>PROCEED TO PAY 💎</button>
+
+            <div style={{ padding: '20px', borderTop: "1px solid var(--border)", background: 'rgba(0,0,0,0.2)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                <span style={{ fontWeight: '700' }}>Total:</span>
+                <span style={{ color: '#D4AF37', fontWeight: '900' }}>Rs. {cartTotal.toLocaleString()}</span>
+              </div>
+              <button onClick={handleCartCheckout} style={{ width: "100%", padding: "14px", background: "#D4AF37", color: "#000", border: "none", borderRadius: "12px", fontWeight: "900", cursor: 'pointer', transition: '0.3s' }}>
+                PROCEED TO PAY
+              </button>
             </div>
           </motion.div>
         </>
@@ -90,11 +111,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body suppressHydrationWarning style={{ margin: 0, backgroundColor: "var(--background)", color: "var(--foreground)" }}>
         <CartProvider>
-          {/* NAVIGATION - RESPONSIVE FIXED */}
           <nav className="navbar-container">
             <div className="nav-wrapper">
               <Link href="/" className="nav-logo">AHMAR LUXE</Link>
-
               <form onSubmit={handleSearch} className="nav-search-form">
                 <input 
                   type="text" placeholder="Search..." 
@@ -102,7 +121,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   className="nav-search-input"
                 />
               </form>
-
               <div className="nav-icons">
                 <button onClick={toggleDarkMode} className="nav-theme-btn">{darkMode ? "☀️" : "🌙"}</button>
                 <BagIcon />
@@ -110,7 +128,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </nav>
 
-          {/* CATEGORIES BAR */}
           <div className="category-scroll-bar">
             {["ALL", "WATCHES", "MOBILE", "FASHION", "ELECTRONICS", "GAMING", "LAPTOP"].map((cat) => (
               <Link key={cat} href={cat === "ALL" ? "/" : `/category/${cat.toLowerCase()}`}
@@ -126,7 +143,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <CartDrawer />
 
-          {/* LUXURY FOOTER */}
           <footer className="footer-luxe">
              <div className="footer-content">
                <div className="footer-section">
@@ -153,33 +169,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AIChatbot />
 
           <style jsx global>{`
-            /* Navbar Core */
-            .navbar-container {
-              background: var(--nav-bg); border-bottom: 1px solid var(--border);
-              position: sticky; top: 0; z-index: 1000; padding: 10px 0;
-            }
-            .nav-wrapper {
-              max-width: 1300px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-            }
+            .navbar-container { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; padding: 10px 0; }
+            .nav-wrapper { max-width: 1300px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
             .nav-logo { color: #D4AF37; font-size: 20px; font-weight: 900; text-decoration: none; letter-spacing: 1px; flex-shrink: 0; }
             .nav-search-form { flex: 1; display: flex; justify-content: center; margin: 0 20px; }
-            .nav-search-input { 
-              width: 100%; max-width: 500px; padding: 8px 15px; border-radius: 20px; 
-              border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--foreground); outline: none;
-            }
+            .nav-search-input { width: 100%; max-width: 500px; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--foreground); outline: none; }
             .nav-icons { display: flex; gap: 15px; align-items: center; flex-shrink: 0; }
             .nav-theme-btn { background: none; border: none; font-size: 20px; cursor: pointer; }
-
-            /* Categories */
-            .category-scroll-bar {
-              display: flex; gap: 25px; padding: 12px 20px; justify-content: center;
-              overflow-x: auto; white-space: nowrap; border-bottom: 1px solid var(--border);
-            }
+            .category-scroll-bar { display: flex; gap: 25px; padding: 12px 20px; justify-content: center; overflow-x: auto; white-space: nowrap; border-bottom: 1px solid var(--border); }
             .category-scroll-bar::-webkit-scrollbar { display: none; }
             .cat-item { text-decoration: none; color: var(--foreground); font-size: 11px; font-weight: 700; opacity: 0.5; transition: 0.3s; }
             .cat-item.active { opacity: 1; color: #D4AF37; border-bottom: 2px solid #D4AF37; padding-bottom: 4px; }
-
-            /* Footer */
             .footer-luxe { background: var(--nav-bg); padding: 50px 20px 20px; border-top: 1px solid var(--border); margin-top: 50px; }
             .footer-content { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
             .footer-title { color: #D4AF37; font-size: 18px; margin-bottom: 10px; }
@@ -188,8 +188,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             .footer-socials { display: flex; gap: 10px; }
             .social-link { width: 30px; height: 30px; border: 1px solid #D4AF37; color: #D4AF37; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 9px; border-radius: 50%; }
             .footer-rights { text-align: center; margin-top: 30px; font-size: 10px; opacity: 0.3; }
-
-            /* MOBILE FIXES (Based on your first picture) */
             @media (max-width: 768px) {
               .nav-wrapper { padding: 0 10px; }
               .nav-logo { font-size: 15px; letter-spacing: 0; }
