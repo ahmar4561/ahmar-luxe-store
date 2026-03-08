@@ -44,34 +44,33 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -8 }} 
-      style={{ border: "1px solid var(--card-border)", borderRadius: "15px", padding: "10px", backgroundColor: "var(--card-bg)", cursor: "pointer" }}
+      className="professional-card"
     >
-      <div style={{ position: "relative", borderRadius: "12px", height: "160px", overflow: "hidden", backgroundColor: "#000" }}>
-        <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.5 }} style={{ width: "100%", height: "100%", position: "relative" }}>
-          <Image src={displayImage} alt={product.name} fill style={{ objectFit: "cover" }} unoptimized />
+      {/* IMAGE CONTAINER - Always fixed ratio */}
+      <div className="img-container">
+        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.4 }} style={{ width: "100%", height: "100%", position: "relative" }}>
+          <Image 
+            src={displayImage} 
+            alt={product.name} 
+            fill 
+            style={{ objectFit: "cover" }} 
+            unoptimized 
+          />
         </motion.div>
       </div>
-      <div style={{ marginTop: "10px" }}>
-        <span style={{ fontSize: "8px", color: "var(--accent)", fontWeight: 'bold' }}>{product.category.toUpperCase()}</span>
-        <h2 style={{ fontSize: "13px", margin: "4px 0", color: "var(--foreground)", fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</h2>
+
+      {/* CONTENT SECTION - Pushes button to bottom */}
+      <div className="card-content">
+        <div style={{ marginBottom: "10px" }}>
+          <span className="cat-label">{product.category.toUpperCase()}</span>
+          <h2 className="product-title">{product.name}</h2>
+        </div>
         
-        {/* --- FIXED: FULL WIDTH UNIFORM BUTTON FOR ALL --- */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "10px" }}>
-          <span style={{ fontSize: "16px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
+        <div className="price-btn-group">
+          <span className="price-tag">Rs. {product.price.toLocaleString()}</span>
           <button 
             onClick={() => addToCart({ ...product, image: displayImage })} 
-            style={{ 
-              backgroundColor: "var(--accent)", 
-              color: "#000", 
-              padding: "10px", 
-              border: "none", 
-              borderRadius: "8px", 
-              cursor: "pointer", 
-              fontWeight: "bold", 
-              fontSize: '11px',
-              width: "100%", // Ye button ko full width karega
-              textTransform: "uppercase"
-            }}
+            className="add-btn"
           >
             + ADD TO BAG
           </button>
@@ -84,7 +83,6 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
 export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params); 
   const slug = resolvedParams.slug;
-  
   const { addToCart, globalProducts } = useCart(); 
   const [visibleCount, setVisibleCount] = useState(12);
 
@@ -100,8 +98,8 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
   const displayProducts = filtered.slice(0, visibleCount);
 
   return (
-    <div style={{ padding: "15px", backgroundColor: "var(--background)", minHeight: "100vh" }}>
-      <h1 style={{ textAlign: "center", fontSize: "22px", fontWeight: "900", color: "var(--accent)", marginBottom: "30px", textTransform: "uppercase", letterSpacing: "2px" }}>{slug}</h1>
+    <div className="page-wrapper">
+      <h1 className="category-title">{slug}</h1>
       
       <div className="product-grid">
         <AnimatePresence mode="popLayout">
@@ -112,40 +110,140 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
       </div>
 
       {filtered.length > visibleCount && (
-        <div style={{ textAlign: 'center', marginTop: '50px', paddingBottom: '40px' }}>
-          <button onClick={() => setVisibleCount(prev => prev + 10)} className="load-more-btn">EXPLORE MORE</button>
+        <div style={{ textAlign: 'center', marginTop: '60px', paddingBottom: '40px' }}>
+          <button onClick={() => setVisibleCount(prev => prev + 12)} className="load-more-btn">EXPLORE MORE</button>
         </div>
       )}
       
       <style jsx global>{`
+        .page-wrapper {
+          padding: 20px 15px;
+          background-color: var(--background);
+          min-height: 100vh;
+        }
+
+        .category-title {
+          text-align: center;
+          font-size: clamp(24px, 5vw, 36px);
+          font-weight: 900;
+          color: var(--accent);
+          margin-bottom: 40px;
+          text-transform: uppercase;
+          letter-spacing: 4px;
+        }
+
+        /* GRID: 2 columns mobile, dynamic laptop */
         .product-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 15px;
           max-width: 1400px;
           margin: 0 auto;
-          padding: 10px;
+          grid-auto-rows: 1fr;
         }
 
         @media (min-width: 768px) {
           .product-grid {
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 25px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
           }
         }
 
-        @media (max-width: 600px) {
-          .product-grid > div {
-            padding: 10px !important;
-          }
-          .product-grid h2 {
-            font-size: 11px !important;
-          }
+        /* PROFESSIONAL CARD STYLING */
+        .professional-card {
+          border: 1px solid var(--card-border);
+          border-radius: 20px;
+          padding: 12px;
+          background-color: var(--card-bg);
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          transition: all 0.3s ease;
         }
 
-        .load-more-btn { padding: 14px 50px; background: var(--accent); color: #000; border: none; cursor: pointer; border-radius: 30px; font-weight: 900; letter-spacing: 2px; transition: 0.3s; }
-        .load-more-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2); }
+        .img-container {
+          position: relative;
+          border-radius: 15px;
+          height: 180px;
+          overflow: hidden;
+          background-color: #000;
+        }
+
+        @media (min-width: 768px) {
+          .img-container { height: 240px; }
+        }
+
+        .card-content {
+          padding: 12px 4px 4px;
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        .cat-label {
+          font-size: 9px;
+          color: var(--accent);
+          font-weight: 800;
+          letter-spacing: 1px;
+        }
+
+        .product-title {
+          font-size: 14px;
+          margin: 6px 0;
+          color: var(--foreground);
+          font-weight: 600;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .price-btn-group {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: auto;
+        }
+
+        .price-tag {
+          font-size: 18px;
+          font-weight: 800;
+          color: var(--accent);
+        }
+
+        .add-btn {
+          background-color: var(--accent);
+          color: #000;
+          padding: 12px;
+          border: none;
+          border-radius: 12px;
+          cursor: pointer;
+          font-weight: 900;
+          font-size: 11px;
+          width: 100%;
+          transition: 0.2s;
+        }
+
+        .add-btn:active { transform: scale(0.95); }
+
+        .load-more-btn { 
+          padding: 16px 60px; 
+          background: transparent; 
+          color: var(--accent); 
+          border: 2px solid var(--accent); 
+          cursor: pointer; 
+          border-radius: 50px; 
+          font-weight: 900; 
+          letter-spacing: 2px; 
+          transition: 0.3s; 
+        }
+
+        .load-more-btn:hover { 
+          background: var(--accent); 
+          color: #000;
+          box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
       `}</style>
     </div>
   );
