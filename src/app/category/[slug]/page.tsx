@@ -65,17 +65,18 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 6. LAPTOP (FIXED - High Uptime Links)
+  // 6. LAPTOP (FIXED WITH NEW SOURCE LINKS)
   if (cat.includes('laptop')) {
     const images = [
       "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
       "https://images.unsplash.com/photo-1517336712462-877523366436",
-      "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5",
+      "https://images.unsplash.com/photo-1603302576837-37561b2e2302",
       "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2",
-      "https://images.unsplash.com/photo-1531297484001-80022131f5a1"
+      "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed"
     ];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
+
   return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&sig=${index}`;
 };
 
@@ -117,12 +118,9 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
   useEffect(() => {
     async function fetchProducts() {
-      const cached = sessionStorage.getItem("ultra_cache");
-      if (cached) setAllProducts(JSON.parse(cached));
       const res = await fetch("/api/products");
       const data = await res.json();
       setAllProducts(data);
-      sessionStorage.setItem("ultra_cache", JSON.stringify(data));
     }
     fetchProducts();
   }, []);
