@@ -69,7 +69,7 @@ const CartDrawer = () => {
               display: 'flex', 
               flexDirection: 'column', 
               boxShadow: '-10px 0 40px rgba(0,0,0,0.4)',
-              borderRadius: '24px', // Professional rounded look
+              borderRadius: '24px', 
               overflow: 'hidden'
             }}
           >
@@ -281,40 +281,44 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <CartDrawer />
 
+          {/* PROFESSIONAL LUXURY FOOTER */}
           <footer style={{ 
             backgroundColor: "var(--nav-bg)", 
             borderTop: "1px solid var(--border)", 
-            padding: "80px 40px 40px", 
-            marginTop: "60px"
+            padding: "60px 20px 30px", 
+            marginTop: "80px"
           }}>
             <div style={{ 
-              maxWidth: "1200px", 
+              maxWidth: "1100px", 
               margin: "0 auto", 
               display: "grid", 
-              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", 
-              gap: "50px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", 
+              gap: "40px",
               textAlign: "left"
             }}>
-              <div>
-                <h2 style={{ color: "#D4AF37", fontWeight: "900", letterSpacing: "2px", marginBottom: "20px", fontSize: "24px" }}>AHMAR LUXE</h2>
-                <p style={{ opacity: 0.6, lineHeight: "1.8", fontSize: "14px" }}>
-                  Elevating your lifestyle with the world's most exclusive collections. Deliver the concierge experience to your doorstep.
+              {/* Brand Section */}
+              <div style={{ gridColumn: "span 1" }}>
+                <h2 style={{ color: "#D4AF37", fontWeight: "900", letterSpacing: "3px", marginBottom: "15px", fontSize: "20px" }}>AHMAR LUXE</h2>
+                <p style={{ opacity: 0.7, lineHeight: "1.6", fontSize: "13px", maxWidth: "280px" }}>
+                  Elevating your lifestyle with the world's most exclusive collections.
                 </p>
               </div>
 
+              {/* Quick Links */}
               <div>
-                <h4 style={{ color: "var(--foreground)", marginBottom: "25px", letterSpacing: "1px", fontWeight: "bold" }}>NAVIGATE</h4>
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "14px" }}>
-                  <Link href="/" style={{ color: "var(--foreground)", opacity: 0.5, textDecoration: "none" }}>All Collections</Link>
-                  <Link href="/category/watches" style={{ color: "var(--foreground)", opacity: 0.5, textDecoration: "none" }}>Elite Watches</Link>
-                  <Link href="/category/fashion" style={{ color: "var(--foreground)", opacity: 0.5, textDecoration: "none" }}>Designer Fashion</Link>
-                  <Link href="/privacy" style={{ color: "var(--foreground)", opacity: 0.5, textDecoration: "none" }}>Privacy Policy</Link>
+                <h4 style={{ color: "#D4AF37", marginBottom: "20px", letterSpacing: "1.5px", fontSize: "12px", fontWeight: "bold" }}>NAVIGATE</h4>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "13px" }}>
+                  <Link href="/" style={{ color: "var(--foreground)", opacity: 0.6, textDecoration: "none", transition: "0.3s" }}>All Collections</Link>
+                  <Link href="/category/watches" style={{ color: "var(--foreground)", opacity: 0.6, textDecoration: "none" }}>Elite Watches</Link>
+                  <Link href="/category/fashion" style={{ color: "var(--foreground)", opacity: 0.6, textDecoration: "none" }}>Designer Fashion</Link>
+                  <Link href="/privacy" style={{ color: "var(--foreground)", opacity: 0.6, textDecoration: "none" }}>Privacy Policy</Link>
                 </div>
               </div>
 
+              {/* Social & Contact */}
               <div>
-                <h4 style={{ color: "var(--foreground)", marginBottom: "25px", letterSpacing: "1px", fontWeight: "bold" }}>CONNECT</h4>
-                <div style={{ display: "flex", gap: "15px", marginBottom: "20px" }}>
+                <h4 style={{ color: "#D4AF37", marginBottom: "20px", letterSpacing: "1.5px", fontSize: "12px", fontWeight: "bold" }}>CONNECT</h4>
+                <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
                   {[
                     { id: 'FB', url: 'https://www.facebook.com/ahmarali.memon' },
                     { id: 'IG', url: 'https://www.instagram.com/ahmar_264?igsh=cHhhZ2ZiY2xzNTB6' },
@@ -325,9 +329,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       <motion.div 
                         whileHover={{ scale: 1.1, backgroundColor: "#D4AF37", color: "#000" }}
                         style={{ 
-                          width: "38px", height: "38px", borderRadius: "50%", border: "1px solid #D4AF37", 
+                          width: "32px", height: "32px", borderRadius: "50%", border: "1px solid rgba(212, 175, 55, 0.3)", 
                           display: "flex", alignItems: "center", justifyContent: "center", 
-                          fontSize: "10px", fontWeight: "bold", color: "#D4AF37", cursor: "pointer", transition: "0.3s"
+                          fontSize: "9px", fontWeight: "bold", color: "#D4AF37", cursor: "pointer"
                         }}
                       >
                         {social.id}
@@ -335,28 +339,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     </a>
                   ))}
                 </div>
-                <p style={{ fontSize: "13px", opacity: 0.5 }}>Support: ahmaralimemon187@gmail.com</p>
+                <p style={{ fontSize: "12px", opacity: 0.5 }}>ahmaralimemon187@gmail.com</p>
               </div>
             </div>
 
+            {/* Bottom Bar */}
             <div style={{ 
-              maxWidth: "1200px", 
-              margin: "60px auto 0", 
-              paddingTop: "30px", 
-              borderTop: "1px solid var(--border)", 
+              maxWidth: "1100px", 
+              margin: "50px auto 0", 
+              paddingTop: "20px", 
+              borderTop: "1px solid rgba(255,255,255,0.05)", 
               display: "flex", 
               justifyContent: "space-between", 
               alignItems: "center", 
               flexWrap: "wrap",
-              gap: "20px"
+              gap: "15px"
             }}>
-              <span style={{ fontSize: "11px", opacity: 0.4, letterSpacing: "2px" }}>
-                © 2026 AHMAR LUXE. THE CONCIERGE EXPERIENCE.
+              <span style={{ fontSize: "10px", opacity: 0.4, letterSpacing: "1.5px", fontWeight: "500" }}>
+                © 2026 AHMAR LUXE. ALL RIGHTS RESERVED.
               </span>
-              <div style={{ display: "flex", gap: "20px", filter: "grayscale(1)", opacity: 0.3 }}>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: "15px" }} />
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: "15px" }} />
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style={{ height: "15px" }} />
+              <div style={{ display: "flex", gap: "15px", opacity: 0.4, filter: "grayscale(1) brightness(1.5)" }}>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: "12px" }} />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: "12px" }} />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style={{ height: "12px" }} />
               </div>
             </div>
           </footer>
