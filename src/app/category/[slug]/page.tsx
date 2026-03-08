@@ -79,25 +79,26 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
 });
 
 export default function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
+  // FIXED: Using 'id' instead of 'slug' to match your dynamic route folder name [id]
   const resolvedParams = use(params); 
-  const slug = resolvedParams.id;
+  const id = resolvedParams.id; 
   const { addToCart, globalProducts } = useCart(); 
   const [visibleCount, setVisibleCount] = useState(12);
 
   const filtered = useMemo(() => {
-    const sCat = slug.toLowerCase().trim();
+    const sCat = id.toLowerCase().trim();
     if (sCat === 'all' || sCat === 'collection') return globalProducts;
     return globalProducts.filter((p: any) => {
       const pCat = (p.category || "").toLowerCase().trim();
       return pCat.includes(sCat) || sCat.includes(pCat.replace('s', ''));
     });
-  }, [globalProducts, slug]);
+  }, [globalProducts, id]);
 
   const displayProducts = filtered.slice(0, visibleCount);
 
   return (
     <div className="page-wrapper">
-      <h1 className="category-title">{slug}</h1>
+      <h1 className="category-title">{id}</h1>
       
       <div className="product-grid">
         <AnimatePresence mode="popLayout">
@@ -130,19 +131,18 @@ export default function CategoryPage({ params }: { params: Promise<{ id: string 
           letter-spacing: 4px;
         }
 
-        /* GRID: 2 columns mobile (Unchanged), 4 columns laptop (Fixed) */
         .product-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 15px;
-          max-width: 1300px;
+          max-width: 1400px;
           margin: 0 auto;
         }
 
         @media (min-width: 1024px) {
           .product-grid {
-            grid-template-columns: repeat(4, 1fr); /* Laptop hamesha 4 columns */
-            gap: 25px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
           }
         }
 
