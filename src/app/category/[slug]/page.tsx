@@ -53,7 +53,7 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 5. GAMING (FIXED WITH NEW PERMANENT LINKS)
+  // 5. GAMING (No Changes)
   if (cat.includes('gaming')) {
     const images = [
       "https://images.unsplash.com/photo-1542751371-adc38448a05e",
@@ -65,13 +65,14 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 6. LAPTOP (No Changes)
+  // 6. LAPTOP (FIXED: Stable links to remove empty box)
   if (cat.includes('laptop')) {
     const images = [
       "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
       "https://images.unsplash.com/photo-1517336712462-877523366436",
       "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5",
-      "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2"
+      "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2",
+      "https://images.unsplash.com/photo-1531297484001-80022131f5a1"
     ];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
