@@ -39,7 +39,6 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       style={{ border: "1px solid var(--card-border)", borderRadius: "15px", padding: "10px", backgroundColor: "var(--card-bg)", cursor: "pointer", position: "relative", overflow: "hidden" }}
     >
-      {/* Container height adjusted for mobile/laptop professional look */}
       <div style={{ position: "relative", borderRadius: "12px", height: "160px", overflow: "hidden", backgroundColor: "#000" }}>
         <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.5 }} style={{ width: "100%", height: "100%", position: "relative" }}>
           <Image src={displayImage} alt={product.name} fill sizes="(max-width: 768px) 50vw, 240px" priority={index < 8} unoptimized style={{ objectFit: "cover" }} />
@@ -95,7 +94,6 @@ function HomeContent() {
         </AnimatePresence>
       </div>
 
-      {/* Grid Optimized: Mobile 2 columns, Laptop 4+ columns */}
       <div className="product-grid">
         <AnimatePresence mode="popLayout">
           {displayProducts.map((product: any, index: number) => (
@@ -114,15 +112,15 @@ function HomeContent() {
       <style jsx global>{`
         .product-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr); /* Default 2 columns for mobile */
+          grid-template-columns: repeat(2, 1fr); 
           gap: 15px;
-          max-width: 1400px;
+          max-width: 1300px;
           margin: 0 auto;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
           .product-grid {
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Laptop professional grid */
+            grid-template-columns: repeat(4, 1fr); /* FIXED: Always 4 products on Laptop */
             gap: 25px;
           }
         }
@@ -134,7 +132,6 @@ function HomeContent() {
   );
 }
 
-// --- PROFESSIONAL ISR WRAPPER ---
 export default function Home() {
   return (
     <Suspense fallback={null}>
