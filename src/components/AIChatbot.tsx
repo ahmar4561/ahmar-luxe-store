@@ -9,10 +9,10 @@ export default function AIChatbot() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [inventory, setInventory] = useState([]); // Products store karne ke liye
+  const [inventory, setInventory] = useState([]); 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Sirf ye ek naya logic: Website ke products fetch karna
+  // --- Logic Untouched ---
   useEffect(() => {
     const loadProducts = async () => {
       try {
@@ -26,7 +26,6 @@ export default function AIChatbot() {
     loadProducts();
   }, []);
 
-  // Auto scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
@@ -71,7 +70,6 @@ export default function AIChatbot() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Ab hum AI ko sath mein inventory (products) bhi bhej rahe hain
         body: JSON.stringify({ 
           prompt: currentInput,
           inventory: inventory 
@@ -105,21 +103,18 @@ export default function AIChatbot() {
         {isOpen ? "×" : "💎"}
       </motion.button>
 
-      {/* Chat Window - Optimized for Premium Floating Look */}
+      {/* Chat Window - FIXED SIDE POSITIONING & SIZE */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
             initial={{ opacity: 0, y: 50, scale: 0.9, transformOrigin: "bottom right" }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            className="chat-popup-container"
             style={{ 
               position: "fixed", 
               bottom: "100px", 
               right: "25px", 
-              width: "calc(100vw - 50px)", // Responsive width for mobile
-              maxWidth: "380px", // Fixed width for laptop
-              height: "70vh", 
-              maxHeight: "600px",
               backgroundColor: "var(--background)", 
               borderRadius: "24px", 
               border: "1px solid var(--card-border)", 
@@ -135,8 +130,7 @@ export default function AIChatbot() {
               padding: "18px", backgroundColor: "var(--card-bg)", 
               borderBottom: "1px solid var(--accent)", color: "var(--accent)", 
               fontWeight: "900", textAlign: "center", 
-              fontSize: "13px", letterSpacing: "2px",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
+              fontSize: "13px", letterSpacing: "2px"
             }}>
               AHMAR LUXE AI
             </div>
@@ -224,6 +218,20 @@ export default function AIChatbot() {
       </AnimatePresence>
 
       <style jsx global>{`
+        /* MOBILE & LAPTOP RESPONSIVE POPUP SIZE */
+        .chat-popup-container {
+          width: 350px; /* Laptop width */
+          height: 500px;
+        }
+
+        @media (max-width: 480px) {
+          .chat-popup-container {
+            width: 85vw; /* Mobile side popup */
+            height: 450px;
+            right: 20px !important;
+          }
+        }
+
         .chat-scroll::-webkit-scrollbar {
           width: 4px;
         }
@@ -235,7 +243,6 @@ export default function AIChatbot() {
           display: flex;
           align-items: center;
           gap: 4px;
-          padding: 5px 0;
         }
         .dot {
           width: 6px;

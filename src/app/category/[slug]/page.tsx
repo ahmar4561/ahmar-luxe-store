@@ -4,7 +4,7 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 
-// --- STABLE IMAGES LOGIC (No Changes) ---
+// --- STABLE IMAGES LOGIC (UNTOUCHED) ---
 const getCorrectImage = (img: string, category: string, index: number) => {
   const cat = (category || "").toLowerCase().trim();
   
@@ -13,7 +13,7 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
   if (cat.includes('watch')) {
-    const images = ["https://images.unsplash.com/photo-1523275335684-37898b6baf30", "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9", "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6", "https://images.unsplash.com/photo-1508057198894-247b23fe5ade", "https://images.枢unsplash.com/photo-1524592094714-0f0654e20314"];
+    const images = ["https://images.unsplash.com/photo-1523275335684-37898b6baf30", "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9", "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6", "https://images.unsplash.com/photo-1508057198894-247b23fe5ade", "https://images.unsplash.com/photo-1524592094714-0f0654e20314"];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
   if (cat.includes('fashion') || cat.includes('clothing')) {
@@ -54,9 +54,25 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
       <div style={{ marginTop: "10px" }}>
         <span style={{ fontSize: "8px", color: "var(--accent)", fontWeight: 'bold' }}>{product.category.toUpperCase()}</span>
         <h2 style={{ fontSize: "13px", margin: "4px 0", color: "var(--foreground)", fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</h2>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "10px" }}>
-          <span style={{ fontSize: "16px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
-          <button onClick={() => addToCart({ ...product, image: displayImage })} style={{ backgroundColor: "var(--accent)", color: "#000", padding: "8px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", fontSize: '10px', width: '100%' }}>+ ADD</button>
+        
+        {/* --- FIXED BUTTON LAYOUT (Side-by-Side) --- */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
+          <span style={{ fontSize: "15px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
+          <button 
+            onClick={() => addToCart({ ...product, image: displayImage })} 
+            style={{ 
+              backgroundColor: "var(--accent)", 
+              color: "#000", 
+              padding: "6px 12px", 
+              border: "none", 
+              borderRadius: "8px", 
+              cursor: "pointer", 
+              fontWeight: "bold", 
+              fontSize: '10px' 
+            }}
+          >
+            + ADD
+          </button>
         </div>
       </div>
     </motion.div>
@@ -100,19 +116,31 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         </div>
       )}
       
+      {/* --- UPDATED STYLING FOR PROFESSIONAL LOOK --- */}
       <style jsx global>{`
         .product-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr); /* Default 2 columns for mobile */
+          grid-template-columns: repeat(2, 1fr); /* Mobile: Exactly 2 products per row */
           gap: 15px;
           max-width: 1400px;
           margin: 0 auto;
+          padding: 10px;
         }
 
         @media (min-width: 768px) {
           .product-grid {
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Laptop professional grid */
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Laptop: Multi-column grid */
             gap: 25px;
+            padding: 20px;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .product-grid > div {
+            padding: 8px !important; /* Mobile cards optimization */
+          }
+          .product-grid h2 {
+            font-size: 11px !important;
           }
         }
 
