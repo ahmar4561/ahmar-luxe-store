@@ -3,8 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext<any>(null);
 
-// Isay export rakhein taake agar kabhi zaroorat paray to use ho sakay, 
-// lekin addToCart isay zabardasti apply nahi karega.
+// --- STABLE IMAGE LOGIC (Bina kisi tabdeeli ke) ---
 export const getStableImage = (product: any) => {
   const cat = (product.category || "").toLowerCase().trim();
   const idStr = (product._id || product.id || "0").toString();
@@ -37,6 +36,23 @@ export const getStableImage = (product: any) => {
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<any[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  
+  // --- SPEED BOOSTER STATES ---
+  const [globalProducts, setGlobalProducts] = useState([]); 
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  // 1. Ek hi baar data fetch karna (Global Cache)
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        setGlobalProducts(data);
+        setIsDataLoaded(true);
+      } catch (err) { console.error("Fetch error:", err); }
+    };
+    fetchAll();
+  }, []);
 
   useEffect(() => {
     const savedCart = localStorage.getItem("ahmar_cart");
@@ -49,7 +65,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("ahmar_cart", JSON.stringify(cart));
   }, [cart]);
 
-  // FIX: Ye function ab product ko waisa hi kabool karega jaisa wo bhej raha hai
   const addToCart = (product: any) => {
     setCart((prev) => {
       const exists = prev.find((item) => item._id === product._id);
@@ -78,11 +93,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   return (
     <CartContext.Provider value={{ 
       cart, addToCart, removeFromCart, clearCart, 
-      cartCount, cartTotal, isCartOpen, setIsCartOpen 
+      cartCount, cartTotal, isCartOpen, setIsCartOpen,
+      globalProducts, isDataLoaded // Ye speed ke liye export kiya
     }}>
       {children}
     </CartContext.Provider>
   );
 }
 
-export const useCart = () => useContext(CartContext); 
+export const useCart = () => useContext(CartContext);

@@ -1,82 +1,37 @@
 "use client";
-import { useEffect, useState, use, useMemo, memo } from "react";
+import { useState, use, useMemo, memo } from "react"; // useEffect ki zaroorat nahi ab
 import { useCart } from "@/context/CartContext"; 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 
-// --- STABLE IMAGES LOGIC ---
+// --- STABLE IMAGES LOGIC (No Changes) ---
 const getCorrectImage = (img: string, category: string, index: number) => {
   const cat = (category || "").toLowerCase().trim();
   
-  // 1. MOBILE (No Changes)
   if (cat.includes('mobile')) {
-    const images = [
-      "https://images.unsplash.com/photo-1598327105666-5b89351aff97",
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
-      "https://images.unsplash.com/photo-1592890288564-76628a30a657",
-      "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37"
-    ];
+    const images = ["https://images.unsplash.com/photo-1598327105666-5b89351aff97", "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9", "https://images.unsplash.com/photo-1592890288564-76628a30a657", "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37"];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
-
-  // 2. WATCHES (No Changes)
   if (cat.includes('watch')) {
-    const images = [
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9",
-      "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6",
-      "https://images.unsplash.com/photo-1508057198894-247b23fe5ade",
-      "https://images.unsplash.com/photo-1524592094714-0f0654e20314"
-    ];
+    const images = ["https://images.unsplash.com/photo-1523275335684-37898b6baf30", "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9", "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6", "https://images.unsplash.com/photo-1508057198894-247b23fe5ade", "https://images.unsplash.com/photo-1524592094714-0f0654e20314"];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
-
-  // 3. FASHION (No Changes)
   if (cat.includes('fashion') || cat.includes('clothing')) {
-    const images = [
-      "https://images.unsplash.com/photo-1445205170230-053b83016050",
-      "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04",
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b",
-      "https://images.unsplash.com/photo-1467043237213-65f2da53396f"
-    ];
+    const images = ["https://images.unsplash.com/photo-1445205170230-053b83016050", "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04", "https://images.unsplash.com/photo-1483985988355-763728e1935b", "https://images.unsplash.com/photo-1467043237213-65f2da53396f"];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
-
-  // 4. ELECTRONICS (No Changes)
   if (cat.includes('electronic')) {
-    const images = [
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-      "https://images.unsplash.com/photo-1523206489230-c012c64b2b48",
-      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf",
-      "https://images.unsplash.com/photo-1491933382434-500287f9b54b"
-    ];
+    const images = ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e", "https://images.pexels.com/photos/1279107/pexels-photo-1279107.jpeg?auto=compress&cs=tinysrgb&w=600", "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf", "https://images.unsplash.com/photo-1491933382434-500287f9b54b"];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
-
-  // 5. GAMING (No Changes)
   if (cat.includes('gaming')) {
-    const images = [
-      "https://images.unsplash.com/photo-1542751371-adc38448a05e",
-      "https://images.unsplash.com/photo-1511512578047-dfb367046420",
-      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc",
-      "https://images.unsplash.com/photo-1550745165-9bc0b252726f",
-      "https://images.unsplash.com/photo-1593305841991-05c297ba4575"
-    ];
+    const images = ["https://images.unsplash.com/photo-1542751371-adc38448a05e", "https://images.unsplash.com/photo-1511512578047-dfb367046420", "https://images.unsplash.com/photo-1538481199705-c710c4e965fc", "https://images.unsplash.com/photo-1550745165-9bc0b252726f", "https://images.unsplash.com/photo-1593305841991-05c297ba4575"];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
-
-  // 6. LAPTOP (FINAL FIX - High Stability Links)
   if (cat.includes('laptop')) {
-    const images = [
-      "https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600",
-      "https://images.pexels.com/photos/1229861/pexels-photo-1229861.jpeg?auto=compress&cs=tinysrgb&w=600",
-      "https://images.pexels.com/photos/812264/pexels-photo-812264.jpeg?auto=compress&cs=tinysrgb&w=600",
-      "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg?auto=compress&cs=tinysrgb&w=600",
-      "https://images.pexels.com/photos/2528118/pexels-photo-2528118.jpeg?auto=compress&cs=tinysrgb&w=600"
-    ];
+    const images = ["https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600", "https://images.pexels.com/photos/1229861/pexels-photo-1229861.jpeg?auto=compress&cs=tinysrgb&w=600", "https://images.pexels.com/photos/812264/pexels-photo-812264.jpeg?auto=compress&cs=tinysrgb&w=600", "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg?auto=compress&cs=tinysrgb&w=600", "https://images.pexels.com/photos/2528118/pexels-photo-2528118.jpeg?auto=compress&cs=tinysrgb&w=600"];
     return images[index % images.length];
   }
-
   return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&sig=${index}`;
 };
 
@@ -111,28 +66,20 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
 export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params); 
   const slug = resolvedParams.slug;
-  const { addToCart } = useCart(); 
   
-  const [allProducts, setAllProducts] = useState([]);
+  // ULTRA SPEED: Pulling pre-fetched products from CartContext
+  const { addToCart, globalProducts } = useCart(); 
   const [visibleCount, setVisibleCount] = useState(12);
 
-  useEffect(() => {
-    async function fetchProducts() {
-      const res = await fetch("/api/products");
-      const data = await res.json();
-      setAllProducts(data);
-    }
-    fetchProducts();
-  }, []);
-
+  // Instant filtering without useEffect/fetch
   const filtered = useMemo(() => {
     const sCat = slug.toLowerCase().trim();
-    if (sCat === 'all' || sCat === 'collection') return allProducts;
-    return allProducts.filter((p: any) => {
-      const pCat = p.category.toLowerCase().trim();
+    if (sCat === 'all' || sCat === 'collection') return globalProducts;
+    return globalProducts.filter((p: any) => {
+      const pCat = (p.category || "").toLowerCase().trim();
       return pCat.includes(sCat) || sCat.includes(pCat.replace('s', ''));
     });
-  }, [allProducts, slug]);
+  }, [globalProducts, slug]);
 
   const displayProducts = filtered.slice(0, visibleCount);
 
@@ -157,4 +104,4 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
       `}</style>
     </div>
   );
-} 
+}
