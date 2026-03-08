@@ -55,23 +55,25 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
         <span style={{ fontSize: "8px", color: "var(--accent)", fontWeight: 'bold' }}>{product.category.toUpperCase()}</span>
         <h2 style={{ fontSize: "13px", margin: "4px 0", color: "var(--foreground)", fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</h2>
         
-        {/* --- FIXED BUTTON LAYOUT (Side-by-Side) --- */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
-          <span style={{ fontSize: "15px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
+        {/* --- FIXED: FULL WIDTH UNIFORM BUTTON FOR ALL --- */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "10px" }}>
+          <span style={{ fontSize: "16px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
           <button 
             onClick={() => addToCart({ ...product, image: displayImage })} 
             style={{ 
               backgroundColor: "var(--accent)", 
               color: "#000", 
-              padding: "6px 12px", 
+              padding: "10px", 
               border: "none", 
               borderRadius: "8px", 
               cursor: "pointer", 
               fontWeight: "bold", 
-              fontSize: '10px' 
+              fontSize: '11px',
+              width: "100%", // Ye button ko full width karega
+              textTransform: "uppercase"
             }}
           >
-            + ADD
+            + ADD TO BAG
           </button>
         </div>
       </div>
@@ -101,7 +103,6 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
     <div style={{ padding: "15px", backgroundColor: "var(--background)", minHeight: "100vh" }}>
       <h1 style={{ textAlign: "center", fontSize: "22px", fontWeight: "900", color: "var(--accent)", marginBottom: "30px", textTransform: "uppercase", letterSpacing: "2px" }}>{slug}</h1>
       
-      {/* Grid Optimized for Mobile 2-columns and Laptop multi-columns */}
       <div className="product-grid">
         <AnimatePresence mode="popLayout">
           {displayProducts.map((product: any, index: number) => (
@@ -116,11 +117,10 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         </div>
       )}
       
-      {/* --- UPDATED STYLING FOR PROFESSIONAL LOOK --- */}
       <style jsx global>{`
         .product-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr); /* Mobile: Exactly 2 products per row */
+          grid-template-columns: repeat(2, 1fr);
           gap: 15px;
           max-width: 1400px;
           margin: 0 auto;
@@ -129,7 +129,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
         @media (min-width: 768px) {
           .product-grid {
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Laptop: Multi-column grid */
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 25px;
             padding: 20px;
           }
@@ -137,7 +137,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
         @media (max-width: 600px) {
           .product-grid > div {
-            padding: 8px !important; /* Mobile cards optimization */
+            padding: 10px !important;
           }
           .product-grid h2 {
             font-size: 11px !important;
