@@ -101,7 +101,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
         <h2 style={{ fontSize: "15px", margin: "5px 0", color: "var(--foreground)", fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</h2>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px" }}>
           <span style={{ fontSize: "18px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
-          <button onClick={() => addToCart(product)} style={{ backgroundColor: "var(--accent)", color: "#000", padding: "8px 16px", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "bold", fontSize: '11px' }}>+ ADD</button>
+          <button onClick={() => addToCart({ ...product, image: displayImage })} style={{ backgroundColor: "var(--accent)", color: "#000", padding: "8px 16px", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "bold", fontSize: '11px' }}>+ ADD</button>
         </div>
       </div>
     </motion.div>
