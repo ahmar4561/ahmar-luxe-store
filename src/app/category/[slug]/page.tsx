@@ -4,10 +4,9 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 
-// --- STABLE IMAGES LOGIC (RESTORED: Har category ke apne products dikhenge) ---
+// --- STABLE IMAGES LOGIC (As per your working code) ---
 const getCorrectImage = (img: string, category: string, index: number) => {
   const cat = (category || "").toLowerCase().trim();
-  
   if (cat.includes('mobile')) {
     const images = ["https://images.unsplash.com/photo-1598327105666-5b89351aff97", "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9", "https://images.unsplash.com/photo-1592890288564-76628a30a657", "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37"];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
@@ -35,32 +34,40 @@ const getCorrectImage = (img: string, category: string, index: number) => {
   return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&sig=${index}`;
 };
 
-// --- PRODUCT CARD (STYLED EXACTLY LIKE 'ALL' PAGE) ---
+// --- PRODUCT CARD (UPDATED WITH PREMIUM ALL-PAGE STYLING) ---
 const ProductCard = memo(({ product, index, addToCart }: any) => {
   const displayImage = getCorrectImage(product.image, product.category, index);
 
   return (
     <motion.div 
       layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       whileHover={{ y: -5 }} 
-      className="styled-card"
+      className="premium-main-card"
     >
-      <div className="img-holder">
-        <Image src={displayImage} alt={product.name} fill style={{ objectFit: "cover" }} unoptimized />
+      <div className="image-box">
+        <Image 
+          src={displayImage} 
+          alt={product.name} 
+          fill 
+          style={{ objectFit: "cover" }} 
+          unoptimized 
+        />
       </div>
 
-      <div className="info-area">
-        <span className="cat-text">{product.category.toUpperCase()}</span>
-        <h2 className="title-text">{product.name}</h2>
-        <span className="price-text">Rs. {product.price.toLocaleString()}</span>
-        <button 
-          onClick={() => addToCart({ ...product, image: displayImage })} 
-          className="bag-btn"
-        >
-          + ADD TO BAG
-        </button>
+      <div className="content-box">
+        <span className="cat-pill">{product.category}</span>
+        <h2 className="item-name">{product.name}</h2>
+        <div className="bottom-row">
+          <span className="price">Rs. {product.price.toLocaleString()}</span>
+          <button 
+            onClick={() => addToCart({ ...product, image: displayImage })} 
+            className="bag-action-btn"
+          >
+            + ADD TO BAG
+          </button>
+        </div>
       </div>
     </motion.div>
   );
@@ -84,10 +91,10 @@ export default function CategoryPage({ params }: { params: Promise<{ id: string 
   const displayProducts = filtered.slice(0, visibleCount);
 
   return (
-    <div className="wrapper">
-      <h1 className="main-title">{categoryId}</h1>
+    <div className="cat-page-container">
+      <h1 className="header-title">{categoryId}</h1>
       
-      <div className="grid-container">
+      <div className="main-grid">
         <AnimatePresence mode="popLayout">
           {displayProducts.map((product: any, index: number) => (
             <ProductCard key={product._id || index} product={product} index={index} addToCart={addToCart} />
@@ -96,55 +103,112 @@ export default function CategoryPage({ params }: { params: Promise<{ id: string 
       </div>
 
       <style jsx global>{`
-        .wrapper { padding: 20px 15px; background: var(--background); min-height: 100vh; }
-        .main-title { text-align: center; font-size: 28px; font-weight: 900; color: var(--accent); margin-bottom: 35px; text-transform: uppercase; letter-spacing: 3px; }
+        .cat-page-container {
+          padding: 20px 15px;
+          background-color: var(--background);
+          min-height: 100vh;
+        }
 
-        .grid-container {
+        .header-title {
+          text-align: center;
+          font-size: 26px;
+          font-weight: 800;
+          color: var(--accent);
+          margin-bottom: 30px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+        }
+
+        /* GRID: Mobile 2, Laptop 4 */
+        .main-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 15px;
-          max-width: 1400px;
+          gap: 12px;
+          max-width: 1300px;
           margin: 0 auto;
         }
 
         @media (min-width: 1024px) {
-          .grid-container { 
-            grid-template-columns: repeat(4, 1fr) !important; 
-            gap: 25px; 
+          .main-grid {
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 20px;
           }
         }
 
-        .styled-card {
-          border: 1px solid var(--card-border);
-          border-radius: 18px;
-          padding: 10px;
-          background: var(--card-bg);
-          height: 100%;
+        /* STYLING COPIED FROM 'ALL' PAGE */
+        .premium-main-card {
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 12px;
+          overflow: hidden;
           display: flex;
           flex-direction: column;
+          height: 100%;
+          transition: 0.3s ease;
         }
 
-        .img-holder { position: relative; border-radius: 12px; height: 160px; overflow: hidden; background: #000; }
-        @media (min-width: 768px) { .img-holder { height: 220px; } }
+        .image-box {
+          position: relative;
+          height: 150px;
+          width: 100%;
+          background: #111;
+        }
 
-        .info-area { padding: 12px 2px 5px; flex-grow: 1; display: flex; flex-direction: column; }
-        .cat-text { font-size: 8px; color: var(--accent); font-weight: 800; letter-spacing: 1px; }
-        .title-text { font-size: 13px; margin: 5px 0; color: var(--foreground); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .price-text { font-size: 16px; font-weight: 800; color: var(--accent); margin-bottom: 12px; }
+        @media (min-width: 768px) {
+          .image-box { height: 200px; }
+        }
 
-        .bag-btn {
+        .content-box {
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+        }
+
+        .cat-pill {
+          font-size: 9px;
+          color: #888;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .item-name {
+          font-size: 14px;
+          color: #fff;
+          margin: 4px 0 12px;
+          font-weight: 500;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .bottom-row {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: auto;
+        }
+
+        .price {
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--accent);
+        }
+
+        .bag-action-btn {
           background: var(--accent);
           color: #000;
-          padding: 10px;
           border: none;
-          border-radius: 10px;
-          cursor: pointer;
-          font-weight: 900;
+          padding: 10px;
+          border-radius: 8px;
+          font-weight: 700;
           font-size: 10px;
-          width: 100%;
+          cursor: pointer;
           transition: 0.2s;
         }
-        .bag-btn:hover { opacity: 0.9; }
+
+        .bag-action-btn:hover { opacity: 0.9; }
       `}</style>
     </div>
   );
