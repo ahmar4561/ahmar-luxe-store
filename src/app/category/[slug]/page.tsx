@@ -79,26 +79,26 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
 });
 
 export default function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
-  // FIXED: Using 'id' instead of 'slug' to match your dynamic route folder name [id]
+  // FIXED: Using 'id' instead of 'slug' to match your folder name [id]
   const resolvedParams = use(params); 
-  const id = resolvedParams.id; 
+  const categoryId = resolvedParams.id; 
   const { addToCart, globalProducts } = useCart(); 
   const [visibleCount, setVisibleCount] = useState(12);
 
   const filtered = useMemo(() => {
-    const sCat = id.toLowerCase().trim();
+    const sCat = (categoryId || "").toLowerCase().trim();
     if (sCat === 'all' || sCat === 'collection') return globalProducts;
     return globalProducts.filter((p: any) => {
       const pCat = (p.category || "").toLowerCase().trim();
       return pCat.includes(sCat) || sCat.includes(pCat.replace('s', ''));
     });
-  }, [globalProducts, id]);
+  }, [globalProducts, categoryId]);
 
   const displayProducts = filtered.slice(0, visibleCount);
 
   return (
     <div className="page-wrapper">
-      <h1 className="category-title">{id}</h1>
+      <h1 className="category-title">{categoryId}</h1>
       
       <div className="product-grid">
         <AnimatePresence mode="popLayout">
@@ -131,6 +131,7 @@ export default function CategoryPage({ params }: { params: Promise<{ id: string 
           letter-spacing: 4px;
         }
 
+        /* GRID FIX: Mobile 2 columns, Laptop 4 columns */
         .product-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
@@ -141,8 +142,8 @@ export default function CategoryPage({ params }: { params: Promise<{ id: string 
 
         @media (min-width: 1024px) {
           .product-grid {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 25px;
           }
         }
 
