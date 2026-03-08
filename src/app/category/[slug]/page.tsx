@@ -65,16 +65,16 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 6. LAPTOP (FIXED WITH NEW SOURCE LINKS)
+  // 6. LAPTOP (ABSOLUTE FIX - NEVER EMPTY)
   if (cat.includes('laptop')) {
     const images = [
-      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
-      "https://images.unsplash.com/photo-1517336712462-877523366436",
-      "https://images.unsplash.com/photo-1603302576837-37561b2e2302",
-      "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2",
-      "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed"
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1517336712462-877523366436?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1454165833767-027ffea9e787?auto=format&fit=crop&q=80&w=800"
     ];
-    return `${images[index % images.length]}?q=80&w=600&auto=format`;
+    return images[index % images.length];
   }
 
   return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&sig=${index}`;
