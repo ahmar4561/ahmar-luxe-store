@@ -4,9 +4,10 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 
-// --- STABLE IMAGES LOGIC (As per your working code) ---
+// --- STABLE IMAGES LOGIC (UNTOUCHED) ---
 const getCorrectImage = (img: string, category: string, index: number) => {
   const cat = (category || "").toLowerCase().trim();
+  
   if (cat.includes('mobile')) {
     const images = ["https://images.unsplash.com/photo-1598327105666-5b89351aff97", "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9", "https://images.unsplash.com/photo-1592890288564-76628a30a657", "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37"];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
@@ -34,36 +35,40 @@ const getCorrectImage = (img: string, category: string, index: number) => {
   return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&sig=${index}`;
 };
 
-// --- PRODUCT CARD (UPDATED WITH PREMIUM ALL-PAGE STYLING) ---
 const ProductCard = memo(({ product, index, addToCart }: any) => {
   const displayImage = getCorrectImage(product.image, product.category, index);
 
   return (
     <motion.div 
       layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      whileHover={{ y: -5 }} 
-      className="premium-main-card"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -8 }} 
+      className="professional-card"
     >
-      <div className="image-box">
-        <Image 
-          src={displayImage} 
-          alt={product.name} 
-          fill 
-          style={{ objectFit: "cover" }} 
-          unoptimized 
-        />
+      <div className="img-container">
+        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.4 }} style={{ width: "100%", height: "100%", position: "relative" }}>
+          <Image 
+            src={displayImage} 
+            alt={product.name} 
+            fill 
+            style={{ objectFit: "cover" }} 
+            unoptimized 
+          />
+        </motion.div>
       </div>
 
-      <div className="content-box">
-        <span className="cat-pill">{product.category}</span>
-        <h2 className="item-name">{product.name}</h2>
-        <div className="bottom-row">
-          <span className="price">Rs. {product.price.toLocaleString()}</span>
+      <div className="card-content">
+        <div style={{ marginBottom: "10px" }}>
+          <span className="cat-label">{product.category.toUpperCase()}</span>
+          <h2 className="product-title">{product.name}</h2>
+        </div>
+        
+        <div className="price-btn-group">
+          <span className="price-tag">Rs. {product.price.toLocaleString()}</span>
           <button 
             onClick={() => addToCart({ ...product, image: displayImage })} 
-            className="bag-action-btn"
+            className="add-btn"
           >
             + ADD TO BAG
           </button>
@@ -74,6 +79,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
 });
 
 export default function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
+  // FIXED: Using 'id' instead of 'slug' to match your folder name [id]
   const resolvedParams = use(params); 
   const categoryId = resolvedParams.id; 
   const { addToCart, globalProducts } = useCart(); 
@@ -91,10 +97,10 @@ export default function CategoryPage({ params }: { params: Promise<{ id: string 
   const displayProducts = filtered.slice(0, visibleCount);
 
   return (
-    <div className="cat-page-container">
-      <h1 className="header-title">{categoryId}</h1>
+    <div className="page-wrapper">
+      <h1 className="category-title">{categoryId}</h1>
       
-      <div className="main-grid">
+      <div className="product-grid">
         <AnimatePresence mode="popLayout">
           {displayProducts.map((product: any, index: number) => (
             <ProductCard key={product._id || index} product={product} index={index} addToCart={addToCart} />
@@ -102,113 +108,139 @@ export default function CategoryPage({ params }: { params: Promise<{ id: string 
         </AnimatePresence>
       </div>
 
+      {filtered.length > visibleCount && (
+        <div style={{ textAlign: 'center', marginTop: '60px', paddingBottom: '40px' }}>
+          <button onClick={() => setVisibleCount(prev => prev + 12)} className="load-more-btn">EXPLORE MORE</button>
+        </div>
+      )}
+      
       <style jsx global>{`
-        .cat-page-container {
+        .page-wrapper {
           padding: 20px 15px;
           background-color: var(--background);
           min-height: 100vh;
         }
 
-        .header-title {
+        .category-title {
           text-align: center;
-          font-size: 26px;
-          font-weight: 800;
+          font-size: clamp(24px, 5vw, 36px);
+          font-weight: 900;
           color: var(--accent);
-          margin-bottom: 30px;
+          margin-bottom: 40px;
           text-transform: uppercase;
-          letter-spacing: 2px;
+          letter-spacing: 4px;
         }
 
-        /* GRID: Mobile 2, Laptop 4 */
-        .main-grid {
+        /* GRID FIX: Mobile 2 columns, Laptop 4 columns */
+        .product-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
-          max-width: 1300px;
+          gap: 15px;
+          max-width: 1400px;
           margin: 0 auto;
         }
 
         @media (min-width: 1024px) {
-          .main-grid {
+          .product-grid {
             grid-template-columns: repeat(4, 1fr) !important;
-            gap: 20px;
+            gap: 25px;
           }
         }
 
-        /* STYLING COPIED FROM 'ALL' PAGE */
-        .premium-main-card {
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 12px;
-          overflow: hidden;
+        .professional-card {
+          border: 1px solid var(--card-border);
+          border-radius: 20px;
+          padding: 12px;
+          background-color: var(--card-bg);
           display: flex;
           flex-direction: column;
           height: 100%;
-          transition: 0.3s ease;
+          transition: all 0.3s ease;
         }
 
-        .image-box {
+        .img-container {
           position: relative;
-          height: 150px;
-          width: 100%;
-          background: #111;
+          border-radius: 15px;
+          height: 180px;
+          overflow: hidden;
+          background-color: #000;
         }
 
         @media (min-width: 768px) {
-          .image-box { height: 200px; }
+          .img-container { height: 240px; }
         }
 
-        .content-box {
-          padding: 12px;
+        .card-content {
+          padding: 12px 4px 4px;
+          flex-grow: 1;
           display: flex;
           flex-direction: column;
-          flex-grow: 1;
+          justify-content: space-between;
         }
 
-        .cat-pill {
+        .cat-label {
           font-size: 9px;
-          color: #888;
-          text-transform: uppercase;
+          color: var(--accent);
+          font-weight: 800;
           letter-spacing: 1px;
         }
 
-        .item-name {
+        .product-title {
           font-size: 14px;
-          color: #fff;
-          margin: 4px 0 12px;
-          font-weight: 500;
+          margin: 6px 0;
+          color: var(--foreground);
+          font-weight: 600;
           display: -webkit-box;
-          -webkit-line-clamp: 1;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
 
-        .bottom-row {
+        .price-btn-group {
           display: flex;
           flex-direction: column;
           gap: 10px;
           margin-top: auto;
         }
 
-        .price {
-          font-size: 16px;
-          font-weight: 700;
+        .price-tag {
+          font-size: 18px;
+          font-weight: 800;
           color: var(--accent);
         }
 
-        .bag-action-btn {
-          background: var(--accent);
+        .add-btn {
+          background-color: var(--accent);
           color: #000;
+          padding: 12px;
           border: none;
-          padding: 10px;
-          border-radius: 8px;
-          font-weight: 700;
-          font-size: 10px;
+          border-radius: 12px;
           cursor: pointer;
+          font-weight: 900;
+          font-size: 11px;
+          width: 100%;
           transition: 0.2s;
         }
 
-        .bag-action-btn:hover { opacity: 0.9; }
+        .add-btn:active { transform: scale(0.95); }
+
+        .load-more-btn { 
+          padding: 16px 60px; 
+          background: transparent; 
+          color: var(--accent); 
+          border: 2px solid var(--accent); 
+          cursor: pointer; 
+          border-radius: 50px; 
+          font-weight: 900; 
+          letter-spacing: 2px; 
+          transition: 0.3s; 
+        }
+
+        .load-more-btn:hover { 
+          background: var(--accent); 
+          color: #000;
+          box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
       `}</style>
     </div>
   );
