@@ -46,7 +46,7 @@ const CartDrawer = () => {
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setIsCartOpen(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 1999 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 1999 }}
           />
 
           <motion.div 
@@ -54,8 +54,8 @@ const CartDrawer = () => {
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             style={{ 
               position: 'fixed', right: 0, top: 0, height: '100vh', width: '100%', maxWidth: '400px', 
-              background: '#050505', borderLeft: '1px solid #D4AF3744', zIndex: 2000,
-              padding: '40px', display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 30px rgba(0,0,0,0.5)'
+              background: 'var(--background)', borderLeft: '1px solid var(--border)', zIndex: 2000,
+              padding: '40px', display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 30px rgba(0,0,0,0.1)'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
@@ -68,13 +68,13 @@ const CartDrawer = () => {
 
             <div style={{ flex: 1, overflowY: "auto", paddingRight: "10px" }}>
               {cart.length === 0 ? (
-                <div style={{ textAlign: "center", marginTop: "100px", opacity: 0.5, letterSpacing: '1px' }}>YOUR ELITE BAG IS EMPTY.</div>
+                <div style={{ textAlign: "center", marginTop: "100px", opacity: 0.5, color: 'var(--foreground)', letterSpacing: '1px' }}>YOUR ELITE BAG IS EMPTY.</div>
               ) : (
                 cart.map((item: any) => (
-                  <motion.div layout key={item._id} style={{ display: "flex", gap: "15px", marginBottom: "25px", paddingBottom: "15px", borderBottom: "1px solid #111", alignItems: 'center' }}>
-                    <img src={item.image || item.img} style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "12px", border: '1px solid #222' }} alt={item.name} />
+                  <motion.div layout key={item._id} style={{ display: "flex", gap: "15px", marginBottom: "25px", paddingBottom: "15px", borderBottom: "1px solid var(--border)", alignItems: 'center' }}>
+                    <img src={item.image || item.img} style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "12px", border: '1px solid var(--border)' }} alt={item.name} />
                     <div style={{ flex: 1 }}>
-                      <h4 style={{ margin: 0, fontSize: "15px", color: '#fff' }}>{item.name}</h4>
+                      <h4 style={{ margin: 0, fontSize: "15px", color: 'var(--foreground)' }}>{item.name}</h4>
                       <p style={{ margin: "5px 0", fontSize: "16px", fontWeight: "bold", color: '#D4AF37' }}>Rs. {item.price.toLocaleString()}</p>
                       <button onClick={() => removeFromCart(item._id)} style={{ background: "none", border: "none", color: "#ff4444", cursor: "pointer", fontSize: "11px", fontWeight: 'bold' }}>REMOVE</button>
                     </div>
@@ -84,9 +84,9 @@ const CartDrawer = () => {
             </div>
 
             {cart.length > 0 && (
-              <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: "30px" }}>
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "30px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "30px" }}>
-                  <span style={{ opacity: 0.6, letterSpacing: '1px' }}>ESTIMATED TOTAL</span>
+                  <span style={{ opacity: 0.6, color: 'var(--foreground)', letterSpacing: '1px' }}>ESTIMATED TOTAL</span>
                   <span style={{ fontSize: "22px", fontWeight: "900", color: "#D4AF37" }}>Rs. {cartTotal.toLocaleString()}</span>
                 </div>
                 
@@ -131,7 +131,7 @@ const BagIcon = () => {
             backgroundColor: "#D4AF37", color: "#000", 
             borderRadius: "50%", minWidth: "18px", height: "18px", 
             display: "flex", alignItems: "center", justifyContent: "center", 
-            fontSize: "10px", fontWeight: "900", border: '2px solid #000'
+            fontSize: "10px", fontWeight: "900", border: '2px solid var(--background)'
           }}
         >
           {cartCount}
@@ -187,29 +187,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body suppressHydrationWarning style={{ margin: 0, padding: 0, backgroundColor: "var(--background)", color: "var(--foreground)" }}>
         <CartProvider>
-          {/* NAVIGATION */}
+          {/* NAVIGATION (Fixed Mobile Visibility Issue) */}
           <nav style={{ 
-            padding: "15px 40px", display: "flex", justifyContent: "space-between", alignItems: "center",
+            padding: "10px 15px", display: "flex", justifyContent: "space-between", alignItems: "center",
             borderBottom: "1px solid var(--border)", backgroundColor: "var(--nav-bg)", position: "sticky", top: 0, zIndex: 1000
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
+            <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
               <Link href="/" style={{ textDecoration: 'none', color: 'var(--foreground)' }}>
-                <b style={{ fontSize: "22px", fontWeight: "900", letterSpacing: "-1px", color: '#D4AF37' }}>AHMAR LUXE</b>
+                <b style={{ fontSize: "16px", fontWeight: "900", letterSpacing: "-1px", color: '#D4AF37' }}>AHMAR LUXE</b>
               </Link>
-              <form onSubmit={handleSearch} style={{ position: "relative" }}>
-                <input 
-                  type="text" placeholder="Search luxury..." value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ 
-                    padding: "10px 18px", borderRadius: "25px", border: "1px solid var(--border)", 
-                    backgroundColor: "var(--background)", color: "var(--foreground)", width: "220px", 
-                    outline: "none", fontSize: "13px", transition: '0.3s'
-                  }}
-                />
-              </form>
             </div>
-            <div style={{ display: "flex", gap: "25px", alignItems: "center" }}>
-              <button onClick={toggleDarkMode} style={{ cursor: "pointer", background: "none", border: "none", fontSize: "20px" }}>
+
+            {/* Added Search Bar back into nav with responsive constraints */}
+            <form onSubmit={handleSearch} style={{ flex: 1, margin: "0 10px", maxWidth: "160px" }}>
+              <input 
+                type="text" 
+                placeholder="Search..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ 
+                  width: "100%", padding: "6px 12px", borderRadius: "20px", border: "1px solid var(--border)", 
+                  backgroundColor: "var(--background)", color: "var(--foreground)", fontSize: "12px", outline: "none"
+                }} 
+              />
+            </form>
+
+            <div style={{ display: "flex", gap: "12px", alignItems: "center", flexShrink: 0 }}>
+              <button onClick={toggleDarkMode} style={{ cursor: "pointer", background: "none", border: "none", fontSize: "20px", display: "flex", alignItems: "center" }}>
                 {darkMode ? "☀️" : "🌙"}
               </button>
               <BagIcon />
@@ -218,17 +222,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           {/* CATEGORIES BAR */}
           <div style={{ 
-            display: "flex", gap: "25px", padding: "12px 40px", justifyContent: "center", 
-            fontSize: "11px", backgroundColor: "var(--background)", borderBottom: "1px solid var(--border)", 
-            fontWeight: "700", letterSpacing: '1px'
+            display: "flex", gap: "20px", padding: "12px 20px", 
+            overflowX: "auto", whiteSpace: "nowrap", scrollbarWidth: "none",
+            backgroundColor: "var(--background)", borderBottom: "1px solid var(--border)", 
+            fontWeight: "700", letterSpacing: '1px', WebkitOverflowScrolling: "touch"
           }}>
+            <style>{`div::-webkit-scrollbar { display: none; }`}</style>
             <Link 
               href="/" 
               style={{ 
                 color: 'var(--foreground)', textDecoration: 'none', paddingRight: "15px", borderRight: "1px solid var(--border)",
                 opacity: pathname === "/" ? 1 : 0.4,
                 borderBottom: pathname === "/" ? "2px solid #D4AF37" : "2px solid transparent",
-                paddingBottom: "2px"
+                paddingBottom: "5px", flexShrink: 0, fontSize: "11px"
               }}
             >
               ALL
@@ -238,9 +244,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 key={cat.name} href={cat.path} 
                 style={{ 
                   color: 'var(--foreground)', opacity: pathname === cat.path ? 1 : 0.4, 
-                  textDecoration: 'none',
+                  textDecoration: 'none', flexShrink: 0, fontSize: "11px",
                   borderBottom: pathname === cat.path ? "2px solid #D4AF37" : "2px solid transparent",
-                  paddingBottom: "2px", transition: "all 0.3s ease"
+                  paddingBottom: "5px", transition: "all 0.3s ease"
                 }}
               >
                 {cat.name.toUpperCase()}
@@ -254,7 +260,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <CartDrawer />
 
-          {/* --- ULTRA LUXE PROFESSIONAL FOOTER --- */}
           <footer style={{ 
             backgroundColor: "var(--nav-bg)", 
             borderTop: "1px solid var(--border)", 

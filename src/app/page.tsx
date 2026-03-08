@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 const Chatbot = dynamic(() => import('@/components/AIChatbot'), { ssr: false });
 
-// --- STABLE IMAGES LOGIC (Same as yours) ---
+// --- STABLE IMAGES LOGIC ---
 const getCorrectImage = (img: string, category: string, index: number) => {
   const cat = (category || "").toLowerCase().trim();
   if (cat.includes('mobile')) {
@@ -30,26 +30,27 @@ const getCorrectImage = (img: string, category: string, index: number) => {
   return `https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&sig=${index}`;
 };
 
-// --- PRODUCT CARD (Same as yours) ---
+// --- PRODUCT CARD ---
 const ProductCard = memo(({ product, index, addToCart }: any) => {
   const displayImage = getCorrectImage(product.image, product.category, index);
   return (
     <motion.div  
       layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
-      style={{ border: "1px solid var(--card-border)", borderRadius: "20px", padding: "12px", backgroundColor: "var(--card-bg)", cursor: "pointer", position: "relative", overflow: "hidden" }}
+      style={{ border: "1px solid var(--card-border)", borderRadius: "15px", padding: "10px", backgroundColor: "var(--card-bg)", cursor: "pointer", position: "relative", overflow: "hidden" }}
     >
-      <div style={{ position: "relative", borderRadius: "15px", height: "200px", overflow: "hidden", backgroundColor: "#000" }}>
+      {/* Container height adjusted for mobile/laptop professional look */}
+      <div style={{ position: "relative", borderRadius: "12px", height: "160px", overflow: "hidden", backgroundColor: "#000" }}>
         <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.5 }} style={{ width: "100%", height: "100%", position: "relative" }}>
-          <Image src={displayImage} alt={product.name} fill sizes="240px" priority={index < 8} unoptimized style={{ objectFit: "cover" }} />
+          <Image src={displayImage} alt={product.name} fill sizes="(max-width: 768px) 50vw, 240px" priority={index < 8} unoptimized style={{ objectFit: "cover" }} />
         </motion.div>
       </div>
-      <div style={{ marginTop: "12px" }}>
-        <span style={{ fontSize: "9px", color: "var(--accent)", letterSpacing: '1px', fontWeight: 'bold' }}>{product.category.toUpperCase()}</span>
-        <h2 style={{ fontSize: "15px", margin: "5px 0", color: "var(--foreground)", fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</h2>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px" }}>
-          <span style={{ fontSize: "18px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
-          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }} onClick={() => addToCart({ ...product, image: displayImage })} style={{ backgroundColor: "var(--accent)", color: "#000", padding: "8px 16px", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "bold", fontSize: '11px', boxShadow: "0 4px 15px rgba(212, 175, 55, 0.2)" }}>+ ADD</motion.button>
+      <div style={{ marginTop: "10px" }}>
+        <span style={{ fontSize: "8px", color: "var(--accent)", letterSpacing: '1px', fontWeight: 'bold' }}>{product.category.toUpperCase()}</span>
+        <h2 style={{ fontSize: "13px", margin: "4px 0", color: "var(--foreground)", fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "10px" }}>
+          <span style={{ fontSize: "16px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }} onClick={() => addToCart({ ...product, image: displayImage })} style={{ backgroundColor: "var(--accent)", color: "#000", padding: "8px", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", fontSize: '10px', width: '100%' }}>+ ADD TO BAG</motion.button>
         </div>
       </div>
     </motion.div>
@@ -83,18 +84,19 @@ function HomeContent() {
   if (!mounted) return null;
 
   return (
-    <div style={{ padding: "20px", backgroundColor: "var(--background)", minHeight: "100vh" }}>
-      <div style={{ textAlign: "center", marginBottom: "30px", marginTop: "10px", minHeight: "40px" }}>
+    <div style={{ padding: "15px", backgroundColor: "var(--background)", minHeight: "100vh" }}>
+      <div style={{ textAlign: "center", marginBottom: "25px", marginTop: "10px", minHeight: "40px" }}>
         <AnimatePresence mode="wait">
           {!search && (
-            <motion.h1 key={category} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ fontSize: "28px", fontWeight: "900", color: "var(--accent)", letterSpacing: "2px", textTransform: "uppercase" }}>
+            <motion.h1 key={category} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ fontSize: "22px", fontWeight: "900", color: "var(--accent)", letterSpacing: "2px", textTransform: "uppercase" }}>
               {category === "all" ? "EXCLUSIVE COLLECTION" : category}
             </motion.h1>
           )}
         </AnimatePresence>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "25px", maxWidth: "1400px", margin: "0 auto" }}>
+      {/* Grid Optimized: Mobile 2 columns, Laptop 4+ columns */}
+      <div className="product-grid">
         <AnimatePresence mode="popLayout">
           {displayProducts.map((product: any, index: number) => (
             <ProductCard key={product._id || index} product={product} index={index} addToCart={addToCart} />
@@ -108,7 +110,23 @@ function HomeContent() {
         </div>
       )}
       <Chatbot />
+      
       <style jsx global>{`
+        .product-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr); /* Default 2 columns for mobile */
+          gap: 15px;
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+          .product-grid {
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Laptop professional grid */
+            gap: 25px;
+          }
+        }
+
         .load-more-btn { padding: 14px 50px; background: var(--accent); color: #000; border: none; cursor: pointer; border-radius: 30px; font-weight: 900; letter-spacing: 2px; transition: 0.3s; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.15); }
         .load-more-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3); opacity: 0.95; }
       `}</style>
@@ -116,7 +134,7 @@ function HomeContent() {
   );
 }
 
-// --- PROFESSIONAL ISR WRAPPER (This makes it Ultra Pro Max Fast) ---
+// --- PROFESSIONAL ISR WRAPPER ---
 export default function Home() {
   return (
     <Suspense fallback={null}>
