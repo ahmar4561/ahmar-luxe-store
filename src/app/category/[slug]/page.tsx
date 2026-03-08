@@ -4,11 +4,11 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 
-// --- HAR CATEGORY KI ALAG ALAG AUR WORKING IMAGES ---
+// --- STABLE IMAGES LOGIC ---
 const getCorrectImage = (img: string, category: string, index: number) => {
   const cat = (category || "").toLowerCase().trim();
   
-  // 1. MOBILE (No Changes - Working fine)
+  // 1. MOBILE (No Changes)
   if (cat.includes('mobile')) {
     const images = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97",
@@ -19,7 +19,7 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 2. WATCHES (FIXED: High-quality, stable links to remove empty boxes)
+  // 2. WATCHES (No Changes - Already Fixed)
   if (cat.includes('watch')) {
     const images = [
       "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
@@ -31,7 +31,7 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 3. FASHION (No Changes - Working fine)
+  // 3. FASHION (No Changes)
   if (cat.includes('fashion') || cat.includes('clothing')) {
     const images = [
       "https://images.unsplash.com/photo-1445205170230-053b83016050",
@@ -42,7 +42,7 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 4. ELECTRONICS (Unique from Gaming)
+  // 4. ELECTRONICS (No Changes)
   if (cat.includes('electronic')) {
     const images = [
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
@@ -53,13 +53,14 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 5. GAMING (Different set of images)
+  // 5. GAMING (FIXED: Stable Links to remove Empty Boxes)
   if (cat.includes('gaming')) {
     const images = [
       "https://images.unsplash.com/photo-1542751371-adc38448a05e",
       "https://images.unsplash.com/photo-1511512578047-dfb367046420",
       "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf",
-      "https://images.unsplash.com/photo-1605895617484-2c99db4ec555"
+      "https://images.unsplash.com/photo-1552820728-8b83bb6b773f",
+      "https://images.unsplash.com/photo-1580234811497-9bd7fd5f3e35"
     ];
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
@@ -87,27 +88,11 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -8 }} 
-      style={{ 
-        border: "1px solid var(--card-border)", 
-        borderRadius: "20px", 
-        padding: "12px", 
-        backgroundColor: "var(--card-bg)", 
-        cursor: "pointer" 
-      }}
+      style={{ border: "1px solid var(--card-border)", borderRadius: "20px", padding: "12px", backgroundColor: "var(--card-bg)", cursor: "pointer" }}
     >
       <div style={{ position: "relative", borderRadius: "15px", height: "200px", overflow: "hidden", backgroundColor: "#000" }}>
-        <motion.div 
-          whileHover={{ scale: 1.1 }} 
-          transition={{ duration: 0.5 }} 
-          style={{ width: "100%", height: "100%", position: "relative" }}
-        >
-          <Image 
-            src={displayImage} 
-            alt={product.name} 
-            fill 
-            style={{ objectFit: "cover" }} 
-            unoptimized 
-          />
+        <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.5 }} style={{ width: "100%", height: "100%", position: "relative" }}>
+          <Image src={displayImage} alt={product.name} fill style={{ objectFit: "cover" }} unoptimized />
         </motion.div>
       </div>
       <div style={{ marginTop: "12px" }}>
@@ -115,21 +100,7 @@ const ProductCard = memo(({ product, index, addToCart }: any) => {
         <h2 style={{ fontSize: "15px", margin: "5px 0", color: "var(--foreground)", fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</h2>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px" }}>
           <span style={{ fontSize: "18px", fontWeight: "800", color: "var(--accent)" }}>Rs. {product.price.toLocaleString()}</span>
-          <button 
-            onClick={() => addToCart(product)} 
-            style={{ 
-                backgroundColor: "var(--accent)", 
-                color: "#000", 
-                padding: "8px 16px", 
-                border: "none", 
-                borderRadius: "10px", 
-                cursor: "pointer", 
-                fontWeight: "bold", 
-                fontSize: '11px' 
-            }}
-          >
-            + ADD
-          </button>
+          <button onClick={() => addToCart(product)} style={{ backgroundColor: "var(--accent)", color: "#000", padding: "8px 16px", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "bold", fontSize: '11px' }}>+ ADD</button>
         </div>
       </div>
     </motion.div>
@@ -148,7 +119,6 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
     async function fetchProducts() {
       const cached = sessionStorage.getItem("ultra_cache");
       if (cached) setAllProducts(JSON.parse(cached));
-      
       const res = await fetch("/api/products");
       const data = await res.json();
       setAllProducts(data);
@@ -171,7 +141,6 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
   return (
     <div style={{ padding: "20px", backgroundColor: "var(--background)", minHeight: "100vh" }}>
       <h1 style={{ textAlign: "center", fontSize: "28px", fontWeight: "900", color: "var(--accent)", marginBottom: "40px", textTransform: "uppercase" }}>{slug}</h1>
-      
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "25px", maxWidth: "1400px", margin: "0 auto" }}>
         <AnimatePresence mode="popLayout">
           {displayProducts.map((product: any, index: number) => (
@@ -179,29 +148,14 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
           ))}
         </AnimatePresence>
       </div>
-
       {filtered.length > visibleCount && (
         <div style={{ textAlign: 'center', marginTop: '50px', paddingBottom: '40px' }}>
           <button onClick={() => setVisibleCount(prev => prev + 10)} className="load-more-btn">EXPLORE MORE</button>
         </div>
       )}
-
       <style jsx global>{`
-        .load-more-btn { 
-            padding: 14px 50px; 
-            background: var(--accent); 
-            color: #000; 
-            border: none; 
-            cursor: pointer; 
-            border-radius: 30px; 
-            font-weight: 900; 
-            letter-spacing: 2px; 
-            transition: 0.3s; 
-        }
-        .load-more-btn:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2); 
-        }
+        .load-more-btn { padding: 14px 50px; background: var(--accent); color: #000; border: none; cursor: pointer; border-radius: 30px; font-weight: 900; letter-spacing: 2px; transition: 0.3s; }
+        .load-more-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2); }
       `}</style>
     </div>
   );
