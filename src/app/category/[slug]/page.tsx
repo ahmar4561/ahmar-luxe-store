@@ -65,7 +65,7 @@ const getCorrectImage = (img: string, category: string, index: number) => {
     return `${images[index % images.length]}?q=80&w=600&auto=format`;
   }
 
-  // 6. LAPTOP (FIXED: Stable links to remove empty box)
+  // 6. LAPTOP (FIXED: Brand New High-Uptime Links)
   if (cat.includes('laptop')) {
     const images = [
       "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
